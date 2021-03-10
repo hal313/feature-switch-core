@@ -1,0 +1,11 @@
+export const isTrue = value => true === value || 'true' === (value + '').toLowerCase();
+export const isFalse = value => false === value || 'false' === (value + '').toLowerCase();
+export const isBoolean = value => isTrue(value) || isFalse(value);
+export const isUndefined = value => undefined === value;
+export const isNull = value => null === value;
+export const isNil = value => isUndefined(value) || isNull(value);
+export const isDefined = value => !isNil(value);
+export const isArray = Array.isArray;
+export const isObject = value => isDefined(value) && 'object' === typeof value;
+export const isObjectStrict = value => isObject(value) && !isArray(value);
+export const isFunction = value => 'function' === typeof value;
