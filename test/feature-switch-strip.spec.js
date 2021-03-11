@@ -1,5 +1,4 @@
 // TODO: Add more test cases into the strip test files
-// TODO: Test passing options to the stripper
 
 import * as FeatureSwitchStrip from '../src/feature-switch-strip';
 import * as fs from 'fs';
@@ -53,7 +52,7 @@ expect.extend({
      * @param {string} expected the expected value
      * @returns {Object} a string "message" and a boolean "pass" attribute
      */
-    toMatchHTML(received, expected) {
+    toMatchExpected(received, expected) {
         // Set to a positive number in order to truncate
         const padding = -1;
         const pass = received.trim() === expected.trim();
@@ -76,35 +75,102 @@ expect.extend({
 
 describe('FeatureSwitchStrip', () => {
 
-    const features = {
-        'feature-one': true,
-        'feature-two': false
-    };
+    describe('General functionality', () => {
 
-    const options = {};
+        const features = {
+            'feature-one': true,
+            'feature-two': false
+        };
 
-    // This block of code will find all files which match:
-    // STRIP_FILES_DIR/*-source.<extension>
-    //
-    // For each match, the source file is read in as well as the expected
-    // results (STRIP_FILES_DIR/*-epected.<extension>). The source is
-    // fed through the stripper and the results of the strip operation are
-    // matched against the HTML matcher.
-    ['js', 'html', 'css'].forEach(extension => {
+        // This block of code will find all files which match:
+        // STRIP_FILES_DIR/*-source.<extension>
+        //
+        // For each match, the source file is read in as well as the expected
+        // results (STRIP_FILES_DIR/*-epected.<extension>). The source is
+        // fed through the stripper and the results of the strip operation are
+        // matched against the HTML matcher.
+        ['js', 'html', 'css'].forEach(extension => {
 
-        describe(`Descriptors of type "${extension}"`, () => {
+            describe(`Descriptors of type "${extension}"`, () => {
 
-            getTestStripsByExtension(extension).forEach(stripDescriptor => {
+                getTestStripsByExtension(extension).forEach(stripDescriptor => {
 
-                test(stripDescriptor, () => {
-                    const sourceFile = `${STRIP_FILES_DIR}/${stripDescriptor}-source.${extension}`;
-                    const expectedFile = `${STRIP_FILES_DIR}/${stripDescriptor}-expected.${extension}`;
-                    expect(FeatureSwitchStrip.strip(readFileAsString(sourceFile), features, options)).toMatchHTML(readFileAsString(expectedFile));
+                    test(stripDescriptor, () => {
+                        const sourceFile = `${STRIP_FILES_DIR}/${stripDescriptor}-source.${extension}`;
+                        const expectedFile = `${STRIP_FILES_DIR}/${stripDescriptor}-expected.${extension}`;
+                        expect(FeatureSwitchStrip.strip(readFileAsString(sourceFile), features, {})).toMatchExpected(readFileAsString(expectedFile));
+                    });
+
                 });
 
             });
 
         });
+
+    });
+
+    describe('Options', () => {
+
+        const features = {
+            'feature-one': false,
+            'feature-two': false
+        };
+
+        const source = `
+            // FEATURE.start(feature-one)
+            feature 1
+            // FEATURE.end(feature-one)
+
+            // FEATURE.start(feature-two)
+            feature 2
+            // FEATURE.end(feature-two)
+
+            /*FEATURE.start(feature-one)*/feature 1/*FEATURE.end(feature-one)*/
+            /*FEATURE.start(feature-two)*/feature 2/*FEATURE.end(feature-two)*/
+
+            <feature feature-name="feature-one">feature 1</feature>
+            <feature feature-name="feature-two">feature 2</feature>
+
+            <element feature-name="feature-one">feature 1</element>
+            <element feature-name="feature-two">feature 2</element>
+        `.trim();
+
+        test('should ignore replacement when specified', () => {
+            // This test turns off all features and expects no replacements
+
+            // First, validate that the source will not match itself with the default behavior
+            expect(FeatureSwitchStrip.strip(source, features)).not.toMatchExpected(source);
+
+            // Next, disable all options and verify that the source matches itself (ie: no changes)
+            expect(FeatureSwitchStrip.strip(source, features, {
+                starComments: {enabled: false},
+                slashComments: {enabled: false},
+                htmlComments: {enabled: false},
+                htmlElements: {enabled: false},
+                htmlAttributes: {enabled: false}
+            })).toMatchExpected(source);
+        });
+
+        test('should use the replacers when specified', () => {
+            // For both the actual and expected, trim and remove whitespace in order to ignore whitespace due to the formating of the string literal within code
+            expect(FeatureSwitchStrip.strip(source, features, {
+                starComments: {replace: 'replaced'},
+                slashComments: {replace: 'replaced'},
+                htmlComments: {replace: 'replaced'},
+                htmlElements: {replace: 'replaced'},
+                htmlAttributes: {replace: 'replaced'}
+            }).trim().replace(/\s/g, '')).toMatchExpected(`
+                replaced
+                replaced
+                replaced
+                replaced
+                replaced
+                replaced
+                replaced
+                replaced
+            `.trim().replace(/\s/g, ''));
+        });
+
 
     });
 
