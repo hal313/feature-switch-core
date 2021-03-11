@@ -1,5 +1,3 @@
-// TODO: Write DOM tests
-
 /**
  * Handles enable/disable events. This will deleage to the appropriate handler (the
  * enabled handler when the feature was enabled, or the disabled handler when the
