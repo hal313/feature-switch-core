@@ -93,15 +93,15 @@ const stripHTMLElements = (content, feature, replace) => {
 };
 
 const stripHTMLAttributes = (content, feature, replace) => {
-    // https://regex101.com/r/wfcdo3/1
-    // <((\w|-|_)*?)(?:\s*)feature-switch="?feature-two"?(?:\s*(?:(?:\w|-|_)*(?:=?"?\w*"?)?)*)*?>[\s\S]*?<\/\1>
+    // https://regex101.com/r/IMk3k9/1
+    // <((\w|-|_)*?)(?:\s*)feature-name="?feature-two"?(?:\s*(?:(?:\w|-|_)*(?:=?"?\w*"?)?)*)*?>[\s\S]*?<\/\1>
     //
     // This regular expression looks for:
     //
     // { [start]
     //   The "<" string literal
     //   An element name (letters, numbers, hyphens and underscores) (saved as a back reference for the [end])
-    //   The "feature-switch="feature-name"" string literal
+    //   The "feature-name="feature-name"" string literal
     //   Repeated 0 or more times: possible whitespace, attribute="value", possible whitespace
     //   The ">" string literal
     // }
@@ -113,7 +113,7 @@ const stripHTMLAttributes = (content, feature, replace) => {
     // }
     //
 
-    const start = `<((\\w|-|_)*?)(?:\\s*)feature-switch="?${feature}"?(?:\\s*(?:(?:\\w|-|_)*(?:=?"?\\w*"?)?)*)*?>`;
+    const start = `<((\\w|-|_)*?)(?:\\s*)feature-name="?${feature}"?(?:\\s*(?:(?:\\w|-|_)*(?:=?"?\\w*"?)?)*)*?>`;
     const end = `<\\/\\1>`;
     const any = `[\\s\\S]*?`;
 
