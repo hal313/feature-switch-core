@@ -1,4 +1,4 @@
-// TODO: Update README with sample code, instructions to run the demo, adding a mutation observer for FSDOM, sample code, running the dom sample
+// TODO: Comment code
 
 import * as Context from './context.js';
 import * as Util from './util.js' ;
@@ -18,9 +18,9 @@ export const asFeatures = features => {
     return castAsFeatures(features, Util.isTrue);
 };
 
-const pluckValues = (names, context) => {
+const pluckValues = (names, features, context) => {
     const namesToPluck = Util.isArray(names) ? names : [];
-    return namesToPluck.map(name => Util.isTrue(context.isEnabled(name)));
+    return namesToPluck.map(name => Util.isTrue(context.isEnabled(name, features), features));
 };
 
 const clone = source => {
@@ -132,7 +132,7 @@ export class FeatureManager {
     }
 
     isEnabled(name) {
-        return this.hasFeature(name) ? this.context.isEnabled(name) : false;
+        return this.hasFeature(name) ? this.context.isEnabled(name, this.features) : false;
     }
 
     isDisabled(name) {
@@ -211,18 +211,18 @@ export class FeatureManager {
     }
 
     isAnyEnabled(names) {
-        return pluckValues(names, this.context).some(value => !!value);
+        return pluckValues(names, this.features, this.context).some(value => !!value);
     }
 
     isAllEnabled(names) {
-        return pluckValues(names, this.context).every(value => !!value);
+        return pluckValues(names, this.features, this.context).every(value => !!value);
     }
 
     isAnyDisabled(names) {
-        return pluckValues(names, this.context).some(value => !value);
+        return pluckValues(names, this.features, this.context).some(value => !value);
     }
     isAllDisabled(names) {
-        return pluckValues(names, this.context).every(value => !value);
+        return pluckValues(names, this.features, this.context).every(value => !value);
     }
 
     /**
