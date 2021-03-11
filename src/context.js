@@ -1,4 +1,4 @@
-import * as Util from './util';
+import * as Util from './util.js';
 
 export const createContext = (features, context) => {
 
@@ -17,7 +17,6 @@ export const createContext = (features, context) => {
         // canRemoveFeatures: actualContext.canRemoveFeatures || (() => true)
         canRemoveFeatures: (Util.isFunction(actualContext.canRemoveFeatures) ? actualContext.canRemoveFeatures : () => true),
         onListenerError: (Util.isFunction(actualContext.onListenerError) ? actualContext.onListenerError : error => console.warn(`uncaught error during listener invocation "${error}"`))
-
     };
 
 };

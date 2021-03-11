@@ -1,5 +1,5 @@
-import * as Context from './context' ;
-import * as Util from './util' ;
+import * as Context from './context.js';
+import * as Util from './util.js' ;
 
 export const isFeatures = features => !!features && !Array.isArray(features) && 'object' === typeof features;
 
