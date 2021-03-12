@@ -1,6 +1,6 @@
 {
-  "name": "feature-switch-core",
-  "version": "1.0.0",
+  "name": "@hal313/feature-switch-core",
+  "version": "1.0.1",
   "description": "Feature switch library",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,15 @@
     "type": "git",
     "url": "git+https://github.com/hal313/feature-switch-core.git"
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "feature",
+    "features",
+    "feature switch",
+    "javascript"
+  ],
   "author": "",
   "license": "MIT",
   "bugs": {

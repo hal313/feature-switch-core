@@ -6,25 +6,7 @@ describe('FeatureManager', () => {
 
     const nonFeatures = [undefined, null, true, false, 12345, 'some string', []];
 
-    describe('isFeatures', () => {
 
-        test('should return true when the value can be used as a feature object', () => {
-            expect(FeatureManager.isFeatures({})).toBe(true);
-
-            expect(FeatureManager.isFeatures({
-                booleanFeature: true,
-                stringFeature: 'trueish',
-                numberFeature: 2
-            })).toBe(true);
-        });
-
-        nonFeatures.forEach(type => {
-            test(`should return false when the value (${type}: ${typeof type}) can not be used as a feature object`, () => {
-                expect(FeatureManager.isFeatures(type)).toBe(false);
-            });
-        });
-
-    });
 
     describe('isFeaturesStrict', () => {
 
@@ -39,14 +21,14 @@ describe('FeatureManager', () => {
         };
 
         test('should return true when the value is strictly a feature object', () => {
-            expect(FeatureManager.isFeaturesStrict({})).toBe(true);
+            expect(FeatureManager.isFeatures({})).toBe(true);
 
-            expect(FeatureManager.isFeaturesStrict(strictFeature)).toBe(true);
+            expect(FeatureManager.isFeatures(strictFeature)).toBe(true);
         });
 
         nonFeatures.concat(nonStrictFeature).forEach(type => {
             test(`should return false when the value (${type}: ${typeof type}) is not strictly a feature object`, () => {
-                expect(FeatureManager.isFeaturesStrict(type)).toBe(false);
+                expect(FeatureManager.isFeatures(type)).toBe(false);
             });
         });
 
@@ -58,7 +40,7 @@ describe('FeatureManager', () => {
             test(`should return an empty object when ${value} (${typeof value}) is passed in`, () => {
                 const strictFeatures = FeatureManager.asFeatures(value);
                 expect(strictFeatures).toEqual({});
-                expect(FeatureManager.isFeaturesStrict(strictFeatures)).toBe(true);
+                expect(FeatureManager.isFeatures(strictFeatures)).toBe(true);
             });
         });
 
@@ -86,7 +68,7 @@ describe('FeatureManager', () => {
 
             const strictFeatures = FeatureManager.asFeatures(nonStrictFeature);
             expect(strictFeatures).toEqual(expectedStrictFeature);
-            expect(FeatureManager.isFeaturesStrict(strictFeatures)).toEqual(true);
+            expect(FeatureManager.isFeatures(strictFeatures)).toEqual(true);
         });
 
     });

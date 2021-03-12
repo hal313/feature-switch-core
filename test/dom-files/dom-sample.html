@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+        <style>
+            .vertical-separator {
+                display: inline-block;
+                height: 16px;
+                width: 2px;
+                background-color: black;
+                position: relative;
+                top: 3px;
+            }
+        </style>
+
+    </head>
+    <body class="container">
+
+        <div>
+            <div>
+                <h4>FeatureManager and FeatureSwitchDOM Demonstration</h4>
+                <ul>
+                    <li>An instance of <code>FeatureManager</code> is used to manage features</li>
+                    <li>An instance of <code>FeatureSwitchDOM</code> is used to alter the DOM</li>
+                    <li>The DOM is not in sync with the features when the page loads; click "Sync To DOM" to sync the DOM to the state of the features</li>
+                    <li>A listener is added to the <code>FeatureManager</code> and will dispatch events to <code>FeatureSwitchDOM</code> when the features are enabled or disabled</li>
+                    <li>The "Sync to DOM" button will invoke <code>FeatureSwitchDOM.syncToDom(currentFeatures)</code> to the current features from the <code>FeatureManager</code> instance</li>
+                    <li>The "Use Custom Handlers" checkbox will use custom enable/disable handlers when checked; otherwise, the default handlers will be used</li>
+                    <ul>
+                        <li>The default handlers will display or hide content, depending if the feature is enabled or disabled, respectively</li>
+                        <li>The custom handlers will color content green or color content red, depending if the feature is enabled or disabled, respectively</li>
+                    </ul>
+                    <li>Each "Toggle" button will invoke <code>FeatureSwitchDOM.enable(feature)</code> or <code>FeatureSwitchDOM.enable(feature)</code>, accordingly</li>
+                </ul>
+            </div>
+
+            <div>
+                <h4>Notes</h4>
+                <ul>
+                    <li>
+                        There is a difference between calling <code>FeatureSwitchDOM.syncToDom(currentFeatures)</code>
+                        and (<code>FeatureSwitchDOM.enable(feature)</code> or <code>FeatureSwitchDOM.enable(feature)</code>)
+                        when features change
+                        <ul>
+                            <li>Most notably, the visibility behavior of elements will change when feature elements are embedded within other feature elements</li>
+                            <ul>
+                                <li>When using <code>FeatureSwitchDOM.syncToDom(currentFeatures)</code>, embedded features will always be hidden when containing features are disabled</li>
+                                <li>
+                                    When using <code>FeatureSwitchDOM.enable(feature)</code> or <code>FeatureSwitchDOM.enable(feature)</code>, then embedded features <i>may</i> be visible even if the containing features are not enabled (not visible);
+                                    as well, decendant embedded feature elements may be visible even when their feature is disabled.
+                                </li>
+                            </ul>
+                            <li>In the "Embedded" examples, "feature 2" is embedded within "feature 1", "feature 3" is embedded under "feature 2" and "feature 4" is embedded within "feature 3" </li>
+                            <li>You can <a href="" id="js-observe-scenario-one">observe</a> this by using the default handlers and disabling "feature 1" and toggling "feature 2" until it "feature 2" is enabled</li>
+                            <ul>
+                                <li>In this example, nothing should be rendered in the embedded examples since "feature 1" should be hidden; however, the embedded features ("feature 2", "feature 3" and "feature 4") are visible</li>
+                                <li>Note that "feature 4" should also not render, but is visible</li>
+                                <li>Click "Sync To DOM" to render elements correctly and see the difference</li>
+                                <li>If using embedded features, it is better to use <code>FeatureSwitchDOM.syncToDom(currentFeatures)</code> instead of <code>FeatureSwitchDOM.enable(feature)</code> and <code>FeatureSwitchDOM.enable(feature)</code></li>
+                            </ul>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div>
+            <hr/>
+            <button class="js-sync-to-dom  btn btn-primary">Sync To DOM</button>
+            <div class="vertical-separator"></div>
+            <input type="checkbox" id="js-use-custom-handlers"><label>Use Custom Handlers</label>
+            <div class="vertical-separator"></div>
+            <button class="js-toggle-feature btn btn-primary" data-feature-name='featureone'>Toggle 1</button>
+            <button class="js-toggle-feature btn btn-primary" data-feature-name='featuretwo'>Toggle 2</button>
+            <button class="js-toggle-feature btn btn-primary" data-feature-name='featurethree'>Toggle 3</button>
+            <button class="js-toggle-feature btn btn-primary" data-feature-name='featurefour'>Toggle 4</button>
+        </div>
+
+        <div>
+            <hr/>
+            <h3>Feature Example</h3>
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">feature</th>
+                        <th scope="col">comment feature</th>
+                        <th scope="col">feature-name element</th>
+                        <th scope="col">feature element</th>
+                        <th scope="col">element attribute</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td><!-- FEATURE.start(featureone) -->feature 1<!-- FEATURE.end(featureone) --></td>
+                        <td><div><feature-featureone>feature 1</feature-featureone></div></td>
+                        <td><div><feature name="featureone">feature 1</feature></div></td>
+                        <td><div><div feature-name="featureone">feature 1</div></div></td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">2</th>
+                        <td><!-- FEATURE.start(featuretwo) -->feature 2<!-- FEATURE.end(featuretwo) --></td>
+                        <td><div><feature-featuretwo>feature 2</feature-featuretwo></div></td>
+                        <td><div><feature name="featuretwo">feature 2</feature></div></td>
+                        <td><div><div feature-name="featuretwo">feature 2</div></div></td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">3</th>
+                        <td><!-- FEATURE.start(featurethree) --><div>feature 3</div><!-- FEATURE.end(featurethree) --></td>
+                        <td><div><feature-featurethree>feature 3</feature-featurethree></div></td>
+                        <td><div><feature name="featurethree">feature 3</feature></div></td>
+                        <td><div><div feature-name="featurethree">feature 3</div></div></td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">4</th>
+                        <td><!-- FEATURE.start(featurefour) --><div>feature 4</div><!-- FEATURE.end(featurefour) --></td>
+                        <td><div><feature-featurefour>feature 4</feature-featurefour></div></td>
+                        <td><div><feature name="featurefour">feature 4</feature></div></td>
+                        <td><div><div feature-name="featurefour">feature 4</div></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <hr/>
+            <h3>Embedded Comment Feature (Text Nodes) Example</h3>
+            <div>
+                <!-- FEATURE.start(featureone) -->Feature 1 {
+                    <!-- FEATURE.start(featuretwo) -->Feature 2 {
+                        <!-- FEATURE.start(featurethree) -->Feature 3 {
+                            <!-- FEATURE.start(featurefour) -->Feature 4 {}<!-- FEATURE.end(featurefour) -->
+                        }<!-- FEATURE.end(featurethree) -->
+                    }<!-- FEATURE.end(featuretwo) -->
+                }<!-- FEATURE.end(featureone) -->
+            </div>
+        </div>
+
+        <div>
+            <hr/>
+            <h3>Embedded Comment Feature (Element Nodes) Example</h3>
+            <div>
+                <!-- FEATURE.start(featureone) -->
+                <span>Feature 1 {</span>
+                    <!-- FEATURE.start(featuretwo) -->
+                    <span>Feature 2 {</span>
+                        <!-- FEATURE.start(featurethree) -->
+                        <span>Feature 3 {</span>
+                            <!-- FEATURE.start(featurefour) -->
+                            <span>Feature 4 {}</span>
+                            <!-- FEATURE.end(featurefour) -->
+                        <span>}</span>
+                        <!-- FEATURE.end(featurethree) -->
+                    <span>}</span>
+                    <!-- FEATURE.end(featuretwo) -->
+                <span>}</span>
+                <!-- FEATURE.end(featureone) -->
+            </div>
+        </div>
+
+        <script src="./dom-sample.js" type="module" ></script>
+        <script type="text/javascript" type="module"></script>
+
+    </body>
+</html>

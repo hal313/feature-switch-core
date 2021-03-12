@@ -195,4 +195,56 @@ describe('Util', () => {
 
     });
 
+    describe('mergeDeep', () => {
+
+        test('should merge deep', () => {
+            // Defaults
+            const defaults = {
+                starComments: {
+                    enabled: true,
+                    replace: '/* Feature [${FEATURE}] DISABLED */'
+                },
+                slashComments: {
+                    enabled: true,
+                    replace: '// Feature [${FEATURE}] DISABLED //'
+                },
+                htmlComments: {
+                    enabled: true,
+                    replace: '<!-- Feature [${FEATURE}] DISABLED -->'
+                }
+            };
+            // Overrides
+            const options = {
+                starComments: {
+                    enabled: false
+                },
+                htmlComments: {
+                    replace: 'not today'
+                }
+            };
+            // The expected object ("defaults", with overrides from "options")
+            const expected = {
+                starComments: {
+                    enabled: options.starComments.enabled,
+                    replace: defaults.starComments.replace
+                },
+                slashComments: {
+                    enabled: defaults.slashComments.enabled,
+                    replace: defaults.slashComments.replace
+                },
+                htmlComments: {
+                    enabled: defaults.htmlComments.enabled,
+                    replace: options.htmlComments.replace
+                }
+            };
+
+            // Merge the objects
+            const merged = Util.mergeDeep({}, defaults, options);
+
+            // Check expectations
+            expect(merged).toEqual(expected);
+        });
+
+    });
+
 });
