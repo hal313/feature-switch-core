@@ -17,7 +17,8 @@ const features = {
 const featureManager = new FeatureManager(features);
 
 // Enable, disable and toggle a feature
-console.log('featureOne', isEnabled('featureOne'));
+console.log('featureOne', featureManager.isEnabled('featureOne'));
+// output: featureOne true
 ```
 
 The `FeatureManager` object receives features at instantiation time; these features are cloned so that any changes to the initial feature object is _not_ realized by the `FeatureManager`. Likewise any feature objects obtained from the `FeatureManager` are also clones and will not realize subsequent changes.
