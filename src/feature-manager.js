@@ -1,11 +1,14 @@
-// TODO: Comment code
-
 import * as Context from './context.js';
 import * as Util from './util.js' ;
 
-export const isFeatures = features => !!features && !Array.isArray(features) && 'object' === typeof features;
-
-export const isFeaturesStrict = features => isFeatures(features) && Object.values(features).every(Util.isBoolean);
+/**
+ * Determines if a value is a features object. The value must be an object (not an array) and each
+ * value must be a boolean
+ *
+ * @param {any} value the value to evaluate
+ * @returns {boolean} true, if <i>value</i> is a function
+ */
+export const isFeatures = features => Util.isObjectStrict(features) && Object.values(features).every(Util.isBoolean);
 
 const castAsFeatures = (features, deciderFn) => {
     const strictFeatures = Util.isObjectStrict(features) ? features : {};
