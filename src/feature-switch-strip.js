@@ -323,7 +323,7 @@ export const strip = (content, features, options) => {
     options = mergeDeep({}, defaultOptions, options);
 
     // Get the features to disable
-    const disabledFeatures = Object.keys(features).filter(name => !features[name]);
+    const disabledFeatures = Object.keys(features).filter(feature => !features[feature]);
 
     // Strip based on options
     disabledFeatures.forEach(function (feature) {

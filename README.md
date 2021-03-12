@@ -87,54 +87,54 @@ const featureManager = new FeatureManager(features);
 console.log(featureManager.getFeatures().featureOne);
 // output: true
 
-// hasFeature(name) -> determines if a feature is known to the feature manager
+// hasFeature(feature) -> determines if a feature is known to the feature manager
 console.log(featureManager.hasFeature('featureOne'));
 // output: true
 console.log(featureManager.hasFeature('invalidFeature'));
 // output: false
 
-// isAnyEnabled(names) -> returns true of any of the specified features are enabled
+// isAnyEnabled(features) -> returns true of any of the specified features are enabled
 console.log(featureManager.isAnyEnabled(['featureOne', 'featureTwo']));
 // output: true
 
-// isAllEnabled(names) -> returns true of all of the specified features are enabled
+// isAllEnabled(features) -> returns true of all of the specified features are enabled
 console.log(featureManager.isAllEnabled(['featureOne', 'featureTwo']));
 // output: false
 
-// isAnyDisabled(names) -> returns true if any of the specified features are disabled
+// isAnyDisabled(features) -> returns true if any of the specified features are disabled
 console.log(featureManager.isAnyDisabled(['featureOne', 'featureTwo']));
 // output: true
 
-// isAllDisabled(names) -> returns true of all of the specified features are disabled
+// isAllDisabled(features) -> returns true of all of the specified features are disabled
 console.log(featureManager.isAllDisabled(['featureOne', 'featureTwo']));
 // output: false
 
-// ifEnabled(name, fn, args) -> executes a function if the specified feature is enabled
+// ifEnabled(feature, fn, args) -> executes a function if the specified feature is enabled
 featureManager.ifEnabled('featureOne', (words) => console.log(words.join(' ')), ['feature', 'one']);
 // output: feature one
 
-// ifDisabled(name, fn, args) -> executes a function if the specified feature is disabled
+// ifDisabled(feature, fn, args) -> executes a function if the specified feature is disabled
 featureManager.ifEnabled('featureTwo', (words) => console.log(words.join(' ')), ['feature', 'two']);
 // output: feature two
 
-// decide(name, enabledFn, disabledFn, enabledArgs, disabledArgs) -> ifEnabled and ifDisabled, all rolled up into one
+// decide(feature, enabledFn, disabledFn, enabledArgs, disabledArgs) -> ifEnabled and ifDisabled, all rolled up into one
 decide('featureOne', () => console.log('enabled'), () => console.log('disabled'));
 // output: enabled
 decide('featureTwo', () => console.log('enabled'), () => console.log('disabled'));
 // output: disabled
 
-// addFeature(name, value) -> adds a feature to the feature manager
+// addFeature(feature, value) -> adds a feature to the feature manager
 featureManager.addFeature('featureThree', true);
 console.log(featureManager.isEnabled('featureThree'));
 // output: true
 
-// removeFeature(name) -> removes a feature from the feature manager
+// removeFeature(feature) -> removes a feature from the feature manager
 // NOTE: It is often not a good idea to remove features at runtime as this may cause some logical bugs
 featureManager.removeFeature('featureThree');
 console.log(featureManager.hasFeature('featureThree'));
 // output: false
 
-// setEnabled(name, value) -> used by enable() and disable()
+// setEnabled(feature, value) -> used by enable() and disable()
 featureManager.setEnabled('featureTwo', true);
 console.log(featureManager.isEnabled('featureTwo'));
 // output: true
