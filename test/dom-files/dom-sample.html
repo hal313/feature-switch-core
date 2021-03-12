@@ -1,5 +1,12 @@
-<html>
+<!doctype html>
+<html lang="en">
     <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
         <style>
             .vertical-separator {
                 display: inline-block;
@@ -10,8 +17,9 @@
                 top: 3px;
             }
         </style>
+
     </head>
-    <body>
+    <body class="container">
 
         <div>
             <div>
@@ -63,58 +71,63 @@
 
         <div>
             <hr/>
-            <button class="js-sync-to-dom">Sync To DOM</button>
+            <button class="js-sync-to-dom  btn btn-primary">Sync To DOM</button>
             <div class="vertical-separator"></div>
-            <input type="checkbox" id="js-use-custom-handlers">Use Custom Handlers
+            <input type="checkbox" id="js-use-custom-handlers"><label>Use Custom Handlers</label>
             <div class="vertical-separator"></div>
-            <button class="js-toggle-feature" data-feature-name='featureone'>Toggle 1</button>
-            <button class="js-toggle-feature" data-feature-name='featuretwo'>Toggle 2</button>
-            <button class="js-toggle-feature" data-feature-name='featurethree'>Toggle 3</button>
-            <button class="js-toggle-feature" data-feature-name='featurefour'>Toggle 4</button>
+            <button class="js-toggle-feature btn btn-primary" data-feature-name='featureone'>Toggle 1</button>
+            <button class="js-toggle-feature btn btn-primary" data-feature-name='featuretwo'>Toggle 2</button>
+            <button class="js-toggle-feature btn btn-primary" data-feature-name='featurethree'>Toggle 3</button>
+            <button class="js-toggle-feature btn btn-primary" data-feature-name='featurefour'>Toggle 4</button>
         </div>
 
         <div>
             <hr/>
             <h3>Feature Example</h3>
-            <table border="1">
-                <tr>
-                    <td>feature</td>
-                    <td>comment feature</td>
-                    <td>feature-name element</td>
-                    <td>feature element</td>
-                    <td>element attribute</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><!-- FEATURE.start(featureone) -->feature 1<!-- FEATURE.end(featureone) --></td>
-                    <td><div><feature-featureone>feature 1</feature-featureone></div></td>
-                    <td><div><feature name="featureone">feature 1</feature></div></td>
-                    <td><div><div feature-name="featureone">feature 1</div></div></td>
-                </tr>
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">feature</th>
+                        <th scope="col">comment feature</th>
+                        <th scope="col">feature-name element</th>
+                        <th scope="col">feature element</th>
+                        <th scope="col">element attribute</th>
+                    </tr>
+                </thead>
 
-                <tr>
-                    <td>2</td>
-                    <td><!-- FEATURE.start(featuretwo) -->feature 2<!-- FEATURE.end(featuretwo) --></td>
-                    <td><div><feature-featuretwo>feature 2</feature-featuretwo></div></td>
-                    <td><div><feature name="featuretwo">feature 2</feature></div></td>
-                    <td><div><div feature-name="featuretwo">feature 2</div></div></td>
-                </tr>
+                <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td><!-- FEATURE.start(featureone) -->feature 1<!-- FEATURE.end(featureone) --></td>
+                        <td><div><feature-featureone>feature 1</feature-featureone></div></td>
+                        <td><div><feature name="featureone">feature 1</feature></div></td>
+                        <td><div><div feature-name="featureone">feature 1</div></div></td>
+                    </tr>
 
-                <tr>
-                    <td>3</td>
-                    <td><!-- FEATURE.start(featurethree) --><div>feature 3</div><!-- FEATURE.end(featurethree) --></td>
-                    <td><div><feature-featurethree>feature 3</feature-featurethree></div></td>
-                    <td><div><feature name="featurethree">feature 3</feature></div></td>
-                    <td><div><div feature-name="featurethree">feature 3</div></div></td>
-                </tr>
+                    <tr>
+                        <th scope="row">2</th>
+                        <td><!-- FEATURE.start(featuretwo) -->feature 2<!-- FEATURE.end(featuretwo) --></td>
+                        <td><div><feature-featuretwo>feature 2</feature-featuretwo></div></td>
+                        <td><div><feature name="featuretwo">feature 2</feature></div></td>
+                        <td><div><div feature-name="featuretwo">feature 2</div></div></td>
+                    </tr>
 
-                <tr>
-                    <td>4</td>
-                    <td><!-- FEATURE.start(featurefour) --><div>feature 4</div><!-- FEATURE.end(featurefour) --></td>
-                    <td><div><feature-featurefour>feature 4</feature-featurefour></div></td>
-                    <td><div><feature name="featurefour">feature 4</feature></div></td>
-                    <td><div><div feature-name="featurefour">feature 4</div></div></td>
-                </tr>
+                    <tr>
+                        <th scope="row">3</th>
+                        <td><!-- FEATURE.start(featurethree) --><div>feature 3</div><!-- FEATURE.end(featurethree) --></td>
+                        <td><div><feature-featurethree>feature 3</feature-featurethree></div></td>
+                        <td><div><feature name="featurethree">feature 3</feature></div></td>
+                        <td><div><div feature-name="featurethree">feature 3</div></div></td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">4</th>
+                        <td><!-- FEATURE.start(featurefour) --><div>feature 4</div><!-- FEATURE.end(featurefour) --></td>
+                        <td><div><feature-featurefour>feature 4</feature-featurefour></div></td>
+                        <td><div><feature name="featurefour">feature 4</feature></div></td>
+                        <td><div><div feature-name="featurefour">feature 4</div></div></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
 
