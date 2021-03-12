@@ -18,14 +18,15 @@ export const asFeatures = features => {
     return castAsFeatures(features, Util.isTrue);
 };
 
-const pluckValues = (names, features, context) => {
-    const namesToPluck = Util.isArray(names) ? names : [];
-    return namesToPluck.map(name => Util.isTrue(context.isEnabled(name, features), features));
-};
-
 const clone = source => {
     return JSON.parse(JSON.stringify(source));
 };
+
+const pluckValues = (names, features, context) => {
+    const namesToPluck = Util.isArray(names) ? names : [];
+    return namesToPluck.map(name => Util.isTrue(context.isEnabled(name, clone(features)), features));
+};
+
 
 /**
  * Fires events to the listeners.
@@ -95,10 +96,6 @@ export class FeatureManager {
         // This approach will use the context.isTrue for the initial normalization
         this.features = castAsFeatures(clone(features), context && context.isTrue);
         this.context = Context.createContext(this.features, context);
-
-        // The original approach, which normalizes the values before passing to the context
-        // this.features = asFeatures(clone(features));
-        // this.context = Context.createContext(this.features, context);
     }
 
     canAddFeatures() {
@@ -109,8 +106,6 @@ export class FeatureManager {
         if (this.canAddFeatures()) {
             // Use the context version of isTrue (which may support things such as 'yes', 1 or 'enabled')
             const newValue = normalizeContextTrue(value,  this.context);
-            // this.features[name] = newValue;
-            // fireEvent(name, newValue, this.features, this.listeners);
             setAndFireEvent(name, newValue, this.features, this.listeners, this.context.onListenerError);
         }
     }
@@ -121,8 +116,6 @@ export class FeatureManager {
 
     removeFeature(name) {
         if (this.hasFeature(name) && this.canRemoveFeatures()) {
-            // delete this.features[name];
-            // fireEvent(name, undefined, this.features, this.listeners);
             setAndFireEvent(name, undefined, this.features, this.listeners, this.context.onListenerError);
         }
     }
@@ -132,7 +125,7 @@ export class FeatureManager {
     }
 
     isEnabled(name) {
-        return this.hasFeature(name) ? this.context.isEnabled(name, this.features) : false;
+        return this.hasFeature(name) ? this.context.isEnabled(name, clone(this.features)) : false;
     }
 
     isDisabled(name) {
@@ -151,8 +144,6 @@ export class FeatureManager {
         // Use the context version of isTrue (which may support things such as 'yes', 1 or 'enabled')
         const normalizedValue = normalizeContextTrue(value, this.context);
         if (this.hasFeature(name) && this.canSetFeature(name, normalizedValue)) {
-            // this.features[name] = normalizedValue;
-            // fireEvent(name, normalizedValue, this.features, this.listeners);
             setAndFireEvent(name, normalizedValue, this.features, this.listeners, this.context.onListenerError);
         }
     }
