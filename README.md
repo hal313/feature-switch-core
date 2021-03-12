@@ -1,11 +1,22 @@
-# feature-switch-core
-A JavaScript synchronous implementation of feature switches, with a few bells and whistles. In general, features are describe as plain JavaScript objects whose values are boolean:
+# [feature-switch-core](https://github.com/hal313/feature-switch-core)
+
+[![Build Status](http://img.shields.io/travis/hal313/feature-switch-core/master.svg?style=flat-square)](https://travis-ci.org/hal313/feature-switch-core)
+[![Dependency Status](https://david-dm.org/hal313/feature-switch-core.svg?style=flat-square)](https://david-dm.org/hal313/feature-switch-core)[![DevDependency Status](https://david-dm.org/hal313/feature-switch-core/dev-status.svg?style=flat-square)](https://david-dm.org/hal313/feature-switch-core)
+
+
+> A JavaScript synchronous implementation of feature switches, with a few bells and whistles. In general, features are describe as plain JavaScript objects whose values are boolean:
 
 ```javascript
 const features = {
     featureOne: true,
     featureTwo: false
 };
+
+// Create an instance of a FeatureManager
+const featureManager = new FeatureManager(features);
+
+// Enable, disable and toggle a feature
+console.log('featureOne', isEnabled('featureOne'));
 ```
 
 The `FeatureManager` object receives features at instantiation time; these features are cloned so that any changes to the initial feature object is _not_ realized by the `FeatureManager`. Likewise any feature objects obtained from the `FeatureManager` are also clones and will not realize subsequent changes.
