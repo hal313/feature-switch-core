@@ -290,7 +290,7 @@ featureManager.decide('abTestingFeatureX', implementationA, implementationB);
 ```
 
 ### Example: Dark Testing a new Implementation
-Testing a new implementation can introduce breaking changes. The FeatureManager can be used to allow the original implementation to continue to be used, while also executing the new implementation and sending metrics for evaluation. While the new implementation is executed, the results are never used.
+Testing a new implementation can introduce breaking changes. The FeatureManager can be used to allow the original implementation to continue to be used for all users, while also executing the new implementation for analysis, controlled by a feature switch.
 ```javascript
 // Define some features
 const features = {
