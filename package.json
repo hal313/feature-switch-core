@@ -1,6 +1,6 @@
 {
   "name": "@hal313/feature-switch-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Feature switch library",
   "main": "index.js",
   "scripts": {
