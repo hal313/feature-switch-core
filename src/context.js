@@ -26,7 +26,7 @@ export const createContext = (features, context) => {
          * Determines if a value should be treated as true. Useful for implementations which intend to consider values
          * such as "yes" or "on" as being true.
          *
-         * @param {*} value the value to evaluate for truthiness
+         * @param {any} value the value to evaluate for truthiness
          * @returns true, if the <i>value</i> should be considered true
          */
         isTrue: (Util.isFunction(actualContext.isTrue) ? actualContext.isTrue : value => Util.isTrue(value)),
