@@ -34,20 +34,20 @@ export const createContext = (features, context) => {
         /**
          * Determines if a feature is enabled.
          *
-         * @param {string} featureName the feature name
+         * @param {string} feature the feature name
          * @param {Object} features the feature object; values are feature names and values should be boolean
          * @returns {boolean} true if the feature should be enabled
          */
-        isEnabled: (Util.isFunction(actualContext.isEnabled) ? actualContext.isEnabled : featureName => Util.isTrue(features[featureName])),
+        isEnabled: (Util.isFunction(actualContext.isEnabled) ? actualContext.isEnabled : feature => Util.isTrue(features[feature])),
 
         /**
          * Determines if the feature can be set.
          *
-         * @param {string} featureName the feature name to set
+         * @param {string} feature the feature name to set
          * @param {boolean} proposedEnabled the proposed new value
          * @returns {boolean} returns true if the feature can be set to the proposed value
          */
-        canSet: (Util.isFunction(actualContext.canSet) ? actualContext.canSet : (featureName, proposedEnabled) => true), // jshint ignore:line
+        canSet: (Util.isFunction(actualContext.canSet) ? actualContext.canSet : (feature, proposedEnabled) => true), // jshint ignore:line
 
         /**
          * Determines if features can be added.

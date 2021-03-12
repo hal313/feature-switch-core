@@ -150,8 +150,8 @@ const features = {
 
 // Create an instance of a FeatureManager
 const featureManager = new FeatureManager(features);
-const removeListener = featureManager.addChangeListener((featureSnapshot, featureName, featureValue) => {
-    console.log('feature', featureName, 'was changed to', featureValue);
+const removeListener = featureManager.addChangeListener((featuresSnapshot, feature, value) => {
+    console.log('feature', name, 'was changed to', value);
 });
 featureManager.enable('featureTwo');
 removeListener();
@@ -181,7 +181,7 @@ The 'Context' object:
     // NOTE: Use this with care
 
     // Determines if a feature can be set
-    canSet: (featureName, proposedEnabled) => true,
+    canSet: (feature, enabled) => true,
     // Sometimes it is not possible to alter feature states
 
     // Determines if features can be added
@@ -273,14 +273,14 @@ const features = {
 // Custom context
 const context = {
     // If the current user is enrolled in the alternate implementation, consider the features enabled
-    isEnabled: (featureName, features) => {
+    isEnabled: (feature, features) => {
         // If the feature is an A/B testing feature, defer to the A/B testing decider
-        if ('abTestingFeatureX' === featureName) {
+        if ('abTestingFeatureX' === feature) {
             ABDecider.provideAlternateImplementation(getCurrentUser());
         }
 
         // Otherwise, return the default value
-        return features[featureName];
+        return features[feature];
     }
 };
 
