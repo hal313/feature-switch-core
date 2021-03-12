@@ -290,56 +290,72 @@ featureManager.decide('abTestingFeatureX', implementationA, implementationB);
 ```
 
 ### Example: Dark Testing a new Implementation
-Testing a new implementation can introduce breaking changes. The FeatureManager can be used to allow the original implementation to continue to be used, while also executing the new implementation and sending metrics for evaluation.
+Testing a new implementation can introduce breaking changes. The FeatureManager can be used to allow the original implementation to continue to be used, while also executing the new implementation and sending metrics for evaluation. While the new implementation is executed, the results are never used.
 ```javascript
-import { Metrics } from './some/metrics/module';
-
 // Define some features
 const features = {
-    darkTestFeatureA: true
+    darkTestImplementationA: true
 };
 
-// Custom context
-const context = {
-    // The invoker for ifEnabled(), ifDisabled() and decide()
-    execute: (fn, args) => {
-        const metrics {
-            currentImplementation: {
-                result: undefined,
-                time: 0
-            },
-            nextImplementation: {
-                result: undefined,
-                time: 0
-            }
-        };
-        // Determine if the alternate implementation should be evaluated
-        if ('originalImplementation' === fn.name) {
-            // Keep track of metrics
-            // Assume that newImplementation is an existing function
-            let startTime = new Date().getTime();
-            metrics.nextImplementation.result = newImplementation.apply({}, args);
-            metrics.nextImplementation.time = new Date().getTime() - startTime;
-        }
-
-        // Track the existing implementation
-        let startTime = new Date().getTime();
-        metrics.currentImplementation.result = fn.apply({}, args);
-        metrics.currentImplementation.time = new Date().getTime() - startTime;
-
-        // Send the metrics for evaluation
-        Metrics.sendMetrics(metrics);
-
-        // Return the result from the current implementation
-        return metrics.currentImplementation.result;
+/**
+ * Executes a function, while keeping track of timing and results.
+ *
+ * @param {Function} fn the function to execute
+ * @returns {Object} a descriptor of the execution results
+ */
+const attempt (fn) => {
+    const attemptResult = {
+        result: undefined,
+        time: -1,
+        thrown: false
+    };
+    let startTime;
+    try {
+        startTime = new Date().getTime();
+        attemptResult.result = fn.apply({});
+        attemptResult.time = new Date().getTime() - startTime;
+    } catch (error) {
+        attemptResult.thrown = error;
+        attemptResult.time = new Date().getTime() - startTime;
     }
+    return attemptResult;
+};
+
+/**
+ * Evaluates the differences between the results of two different implementations.
+ *
+ * @param {Object} currentImplementation the current implementation
+ * @param {Object} nextImplementation the implementation under test
+ * @returns {any} the result of the current implementation execution
+ */
+const evaluateMetrics = (currentImplementation, nextImplementation) => {
+
+    // Attempt both implementations
+    const currentResult = attempt(currentImplementation);
+    const nextResult = attempt(nextImplementation);
+
+    console.log('current implementation results', currentResult);
+    console.log('next implementation results', nextResult);
+    console.log('the quicker implementation', (currentResult.time < nextResult.time) ? 'current' : 'next');
+    // Perhaps check that the results are the same, or that both implementations threw or did not throw
+
+    // If the current implementation threw an error, then this function will propogate the error
+    if (!!currentResult.thrown) {
+        throw currentResult.thrown;
+    }
+
+    // Otherwise, return the result of the current implementation
+    return currentResult.result
 };
 
 // Create an instance of a FeatureManager
 const featureManager = new FeatureManager(features, context);
 
-// If dark testing is enabled, send the current implementation
-ifEnabled('darkTestFeatureA', currentImplementation);
+// If dark testing is enabled, then both the current and next implementations will be executed.
+let result = decide('darkTestImplementationA', () => evaluateMetrics(currentImplementation, nextImplementation), currentImplementation)
+
+
+
 ```
 
 ## Developing
