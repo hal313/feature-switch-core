@@ -12,6 +12,8 @@ The `FeatureManager` object receives features at instantiation time; these featu
 
 As well, the `FeatureManager` will normalize the passed in features; any value which is the boolean true or the string literal "true" will be considered `true` and all other values will be considered `false`. It is possible to customize this behavior (this is covered in detail later).
 
+Advanced use scenarios allow for A/B testing and dark testing a new implemenation of some complex functionality (see examples below).
+
 In addition to the `FeatureManager`, there are facilities to strip out features from HTML, JavaScript and CSS. Such functionality may be useful at build time in order to provide different builds based on which features are enabled. This functionality could be leveraged in middleware. For example, an express server may filter HTML documents or JavaScript examples based on server-side features.
 
 Lastly, DOM management code is provided for supporting dynamic management of features within an HTML page.
@@ -230,7 +232,7 @@ featureManager.canDisable('someFeature');
 featureManager.canToggle('someFeature');
 ```
 
-### Supporting Different API Version
+### Example: Supporting Different API Version
 Sometimes it might be helpful to be able to feature switch API client libraries. This can be done like so:
 ```javascript
 // Define some features
@@ -243,6 +245,92 @@ const featureManager = new FeatureManager(features);
 
 // Get API Client version 1, unless features.apiV2 is enabled
 const apiClient = featureManager.decide('apiV2', SomeClientAPI.getClientVersionTwo, SomeClientAPI.getClientVersionOne);
+```
+
+### Example: A/B Testing
+Using a custom `Context` can be used to support A/B testing.
+```javascript
+import { ABDecider } from './some/ab/module';
+import { getCurrentUser } from './some/user/module';
+
+// Define some features
+const features = {
+    featureOne: true,
+    featureTwo: false
+};
+
+// Custom context
+const context = {
+    // If the current user is enrolled in the alternate implementation, consider the features enabled
+    isEnabled: (featureName, features) => {
+        // If the feature is an A/B testing feature, defer to the A/B testing decider
+        if ('abTestingFeatureX' === featureName) {
+            ABDecider.provideAlternateImplementation(getCurrentUser());
+        }
+
+        // Otherwise, return the default value
+        return features[featureName];
+    }
+};
+
+// Create an instance of a FeatureManager
+const featureManager = new FeatureManager(features, context);
+
+// Test
+featureManager.decide('abTestingFeatureX', implementationA, implementationB);
+```
+
+### Example: Dark Testing a new Implementation
+Testing a new implementation can introduce breaking changes. The FeatureManager can be used to allow the original implementation to continue to be used, while also executing the new implementation and sending metrics for evaluation.
+```javascript
+import { Metrics } from './some/metrics/module';
+
+// Define some features
+const features = {
+    darkTestFeatureA: true
+};
+
+// Custom context
+const context = {
+    // The invoker for ifEnabled(), ifDisabled() and decide()
+    execute: (fn, args) => {
+        const metrics {
+            currentImplementation: {
+                result: undefined,
+                time: 0
+            },
+            nextImplementation: {
+                result: undefined,
+                time: 0
+            }
+        };
+        // Determine if the alternate implementation should be evaluated
+        if ('originalImplementation' === fn.name) {
+            // Keep track of metrics
+            // Assume that newImplementation is an existing function
+            let startTime = new Date().getTime();
+            metrics.nextImplementation.result = newImplementation.apply({}, args);
+            metrics.nextImplementation.time = new Date().getTime() - startTime;
+        }
+
+        // Track the existing implementation
+        let startTime = new Date().getTime();
+        metrics.currentImplementation.result = fn.apply({}, args);
+        metrics.currentImplementation.time = new Date().getTime() - startTime;
+
+        // Send the metrics for evaluation
+        Metrics.sendMetrics(metrics);
+
+        // Return the result from the current implementation
+        return metrics.currentImplementation.result;
+    }
+};
+
+// Create an instance of a FeatureManager
+const featureManager = new FeatureManager(features, context);
+
+// If dark testing is enabled, send the current implementation
+ifEnabled('darkTestFeatureA', currentImplementation);
 ```
 
 ## Developing
