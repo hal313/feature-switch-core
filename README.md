@@ -112,17 +112,17 @@ console.log(featureManager.isAllDisabled(['featureOne', 'featureTwo']));
 // output: false
 
 // ifEnabled(feature, fn, args) -> executes a function if the specified feature is enabled
-featureManager.ifEnabled('featureOne', (words) => console.log(words.join(' ')), ['feature', 'one']);
+featureManager.ifEnabled('featureOne', (words) => console.log(words.join(' '), ['feature', 'one']));
 // output: feature one
 
 // ifDisabled(feature, fn, args) -> executes a function if the specified feature is disabled
-featureManager.ifEnabled('featureTwo', (words) => console.log(words.join(' ')), ['feature', 'two']);
+featureManager.ifDisabled('featureTwo', (words) => console.log(words.join(' '), ['feature', 'two']));
 // output: feature two
 
 // decide(feature, enabledFn, disabledFn, enabledArgs, disabledArgs) -> ifEnabled and ifDisabled, all rolled up into one
-decide('featureOne', () => console.log('enabled'), () => console.log('disabled'));
+featureManager.decide('featureOne', () => console.log('enabled'), () => console.log('disabled'));
 // output: enabled
-decide('featureTwo', () => console.log('enabled'), () => console.log('disabled'));
+featureManager.decide('featureTwo', () => console.log('enabled'), () => console.log('disabled'));
 // output: disabled
 
 // addFeature(feature, value) -> adds a feature to the feature manager
