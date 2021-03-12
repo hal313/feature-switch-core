@@ -23,7 +23,7 @@ The `FeatureManager` object receives features at instantiation time; these featu
 
 As well, the `FeatureManager` will normalize the passed in features; any value which is the boolean true or the string literal "true" will be considered `true` and all other values will be considered `false`. It is possible to customize this behavior (this is covered in detail later).
 
-Advanced use scenarios allow for A/B testing and dark testing a new implemenation of some complex functionality (see examples below).
+Advanced use scenarios support A/B testing and dark testing a new implemenation of some complex functionality (see examples below).
 
 In addition to the `FeatureManager`, there are facilities to strip out features from HTML, JavaScript and CSS. Such functionality may be useful at build time in order to provide different builds based on which features are enabled. This functionality could be leveraged in middleware. For example, an express server may filter HTML documents or JavaScript examples based on server-side features.
 
@@ -261,9 +261,6 @@ const apiClient = featureManager.decide('apiV2', SomeClientAPI.getClientVersionT
 ### Example: A/B Testing
 Using a custom `Context` can be used to support A/B testing.
 ```javascript
-import { ABDecider } from './some/ab/module';
-import { getCurrentUser } from './some/user/module';
-
 // Define some features
 const features = {
     featureOne: true,
@@ -276,7 +273,8 @@ const context = {
     isEnabled: (feature, features) => {
         // If the feature is an A/B testing feature, defer to the A/B testing decider
         if ('abTestingFeatureX' === feature) {
-            ABDecider.provideAlternateImplementation(getCurrentUser());
+            // Use username sharding to dermine eligibility, for example: if the username starts with a-m, case insensitive
+            getUser().match(/^[a-mA-M]/);
         }
 
         // Otherwise, return the default value
