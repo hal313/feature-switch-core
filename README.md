@@ -48,29 +48,29 @@ const features = {
 const featureManager = new FeatureManager(features);
 
 // Enable, disable and toggle a feature
-console.log('featureOne', isEnabled('featureOne'));
+console.log('featureOne', featureManager.isEnabled('featureOne'));
 // output: featureOne true
 //
 // Disable the feature
 featureManager.disable('featureOne');
-console.log('featureOne', isEnabled('featureOne'));
+console.log('featureOne', featureManager.isEnabled('featureOne'));
 // output: featureOne false
 //
 // Enable the feature
-featureManager.enable('featureone');
-console.log('featureOne', isEnabled('featureOne'));
+featureManager.enable('featureOne');
+console.log('featureOne', featureManager.isEnabled('featureOne'));
 // output: featureOne true
 //
 // Toggle the feature
-featureManager.toggle('featureone');
-console.log('featureOne', isEnabled('featureOne'));
+featureManager.toggle('featureOne');
+console.log('featureOne', featureManager.isEnabled('featureOne'));
 // output: featureOne false
 
 // Output the state of the feature:
-console.log('featureOne is enabled', isEnabled('featureOne'));
-// output: featureOne false
-console.log('featureOne is disabled', isDisabled('featureOne'));
-// output: featureOne true
+console.log('featureOne is enabled', featureManager.isEnabled('featureOne'));
+// output: featureOne is enabled false
+console.log('featureOne is disabled', featureManager.isDisabled('featureOne'));
+// output: featureOne is disabled true
 ```
 
 ## Advanced Usage
