@@ -284,8 +284,13 @@ export class FeatureManager {
      * @returns {any} the return value of the executed function
      */
     decide(feature, enabledFn, disabledFn, enabledArgs, disabledArgs) {
-        this.ifEnabled(feature, enabledFn, enabledArgs);
-        this.ifDisabled(feature, disabledFn, disabledArgs);
+        if (this.isEnabled(feature)) {
+            return this.ifEnabled(feature, enabledFn, enabledArgs);
+        } else if (this.isDisabled(feature)) {
+            return this.ifDisabled(feature, disabledFn, disabledArgs);         
+        }
+        // Feature is not defined
+        return;
     }
 
     /**
