@@ -271,8 +271,7 @@ Using a custom `Context` can be used to support A/B testing.
 ```javascript
 // Define some features
 const features = {
-    featureOne: true,
-    featureTwo: false
+    abTestingFeatureX: true,
 };
 
 // Custom context
@@ -282,7 +281,10 @@ const context = {
         // If the feature is an A/B testing feature, defer to the A/B testing decider
         if ('abTestingFeatureX' === feature) {
             // Use username sharding to dermine eligibility, for example: if the username starts with a-m, case insensitive
-            getUser().match(/^[a-mA-M]/);
+            // getUser().match(/^[a-mA-M]/);
+            //
+            // In this example, return true
+            return true;
         }
 
         // Otherwise, return the default value
@@ -294,7 +296,9 @@ const context = {
 const featureManager = new FeatureManager(features, context);
 
 // Test
-featureManager.decide('abTestingFeatureX', implementationA, implementationB);
+let result = featureManager.decide('abTestingFeatureX', () => 'implemenationA', () => 'implemenationB');
+console.log('result', result);
+// output: true
 ```
 
 ### Example: Dark Testing a new Implementation
