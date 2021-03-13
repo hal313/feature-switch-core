@@ -262,7 +262,8 @@ const features = {
 const featureManager = new FeatureManager(features);
 
 // Get API Client version 1, unless features.apiV2 is enabled
-const apiClient = featureManager.decide('apiV2', SomeClientAPI.getClientVersionTwo, SomeClientAPI.getClientVersionOne);
+const apiClient = featureManager.decide('apiV2', () => {return {version: 2}}, () => {return {version: 1}});
+console.log('apiClient', apiClient);
 ```
 
 ### Example: A/B Testing
