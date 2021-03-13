@@ -413,12 +413,13 @@ describe('FeatureManager', () => {
             const disabledArgs = ['disabledOne', 'disabledTwo'];
 
             test('the default context should run the enabled function and not the disabled function when the feature is enabled', () => {
-                const enabledFn = jest.fn();
-                const disabledFn = jest.fn();
+                const enabledFn = jest.fn(() => 'enabled');
+                const disabledFn = jest.fn(() => 'disabled');
 
                 const featureManager = new FeatureManager.FeatureManager(features);
                 featureManager.setEnabled(feature, true);
-                featureManager.decide(feature, enabledFn, disabledFn, enabledArgs, disabledArgs);
+                const result = featureManager.decide(feature, enabledFn, disabledFn, enabledArgs, disabledArgs);
+                expect(result).toEqual('enabled');
                 expect(enabledFn.mock.calls.length).toBe(1);
                 expect(enabledFn.mock.calls[0][0]).toBe(enabledArgs[0]);
                 expect(enabledFn.mock.calls[0][1]).toBe(enabledArgs[1]);
@@ -427,13 +428,14 @@ describe('FeatureManager', () => {
             });
 
             test('the default context should run the disabled function and not the enabled function when the feature is disabled', () => {
-                const enabledFn = jest.fn();
-                const disabledFn = jest.fn();
+                const enabledFn = jest.fn(() => 'enabled');
+                const disabledFn = jest.fn(() => 'disabled');
 
                 const featureManager = new FeatureManager.FeatureManager(features);
                 // Set the feature to be disabled
                 featureManager.setEnabled(feature, false);
-                featureManager.decide(feature, enabledFn, disabledFn, enabledArgs, disabledArgs);
+                const result = featureManager.decide(feature, enabledFn, disabledFn, enabledArgs, disabledArgs);
+                expect(result).toEqual('disabled');
                 // The enabled function should not have been executed again
                 expect(enabledFn.mock.calls.length).toBe(0);
                 // Make sure the disabled function was not executed
