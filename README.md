@@ -230,18 +230,24 @@ const features = {
 const featureManager = new FeatureManager(features);
 
 // Determines if features can be added
-featureManager.canAddFeatures();
+console.log(featureManager.canAddFeatures());
+// output: true
 // Determines if features can be removed
-featureManager.canRemoveFeatures();
+console.log(featureManager.canRemoveFeatures());
+// output: true
 // Determines if features can be set
-featureManager.canSetFeature('someFeature', true);
+console.log(featureManager.canSetFeature('someFeature', true));
+// output: false (because feature 'someFeature' does not exist)
 
 // Checks to see if the feature can be enabled
-featureManager.canEnable('someFeature');
+console.log(featureManager.canEnable('someFeature'));
+// output: false (because feature 'someFeature' does not exist)
 // Checks to see if the feature can be disabled
-featureManager.canDisable('someFeature');
+console.log(featureManager.canDisable('someFeature'));
+// output: false (because feature 'someFeature' does not exist)
 // Checks to see if the feature can be toggled
-featureManager.canToggle('someFeature');
+console.log(featureManager.canToggle('someFeature'));
+// output: false (because feature 'someFeature' does not exist)
 ```
 
 ### Example: Supporting Different API Version
