@@ -281,7 +281,7 @@ export class FeatureManager {
      * @param {Function} disabledFn the function to execute if the feature is disabled
      * @param {[]} [enabledArgs] arguments for the <i>enabledFn</i>
      * @param {[]} [disabledArgs] arguments for the <i>disabledFn</i>
-     * @returns {any} the return value of the executed function
+     * @returns {any} the return value of the executed function, or undefined if the feature is unknown
      */
     decide(feature, enabledFn, disabledFn, enabledArgs, disabledArgs) {
         if (this.isEnabled(feature)) {
