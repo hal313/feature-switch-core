@@ -154,9 +154,9 @@ const features = {
 const featureManager = new FeatureManager(features);
 const removeListener = featureManager.addChangeListener((featuresSnapshot, feature, value) => {
     console.log('feature', name, 'was changed to', value);
+    removeListener();
 });
 featureManager.enable('featureTwo');
-removeListener();
 // output: feature featureTwo was changed to true
 // NOTE: The return value of the function is a function which will remove the listener from
 //       the FeatureManager
