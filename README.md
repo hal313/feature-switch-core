@@ -198,8 +198,7 @@ The 'Context' object:
 A `Context` object may be supplied to the `FeatureManager` at construction time. It is not required to provide all members; only the desired members.
 
 ```javascript
-// Assume that the window.beta flag is set to true on beta systems
-const isBeta = () => !!window.beta;
+const isBeta = () => Math.random() < .5;
 
 // Define some features
 const features = {
@@ -216,7 +215,7 @@ const context = {
 const featureManager = new FeatureManager(features, context);
 
 console.log(featureManager.isEnabled('betaFeature'));
-// output: true
+// output: varies on the random value, but will be either true or false
 ```
 
 The `FeatureManager` API also has these functions, which dispatch to the `Context`.
