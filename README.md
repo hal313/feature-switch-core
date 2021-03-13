@@ -296,7 +296,7 @@ const context = {
 const featureManager = new FeatureManager(features, context);
 
 // Test
-let result = featureManager.decide('abTestingFeatureX', () => 'implemenationA', () => 'implemenationB');
+const result = featureManager.decide('abTestingFeatureX', () => 'implemenationA', () => 'implemenationB');
 console.log('result', result);
 // output: true
 ```
@@ -315,7 +315,7 @@ const features = {
  * @param {Function} fn the function to execute
  * @returns {Object} a descriptor of the execution results
  */
-const attempt (fn) => {
+const attempt = (fn) => {
     const attemptResult = {
         result: undefined,
         time: -1,
@@ -361,13 +361,12 @@ const evaluateMetrics = (currentImplementation, nextImplementation) => {
 };
 
 // Create an instance of a FeatureManager
-const featureManager = new FeatureManager(features, context);
+const featureManager = new FeatureManager(features);
 
 // If dark testing is enabled, then both the current and next implementations will be executed.
-let result = decide('darkTestImplementationA', () => evaluateMetrics(currentImplementation, nextImplementation), currentImplementation)
-
-
-
+const result = featureManager.decide('darkTestImplementationA', () => evaluateMetrics(() => 'currentImplementation result', () => 'nextImplementation result'), () => 'currentImplementation result')
+console.log('result', result);
+// TODO output: varies based on which function executed the quickest
 ```
 
 ## Developing
