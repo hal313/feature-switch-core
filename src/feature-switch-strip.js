@@ -59,9 +59,9 @@ const generateReplacementString = (template, feature) => template.replace(/\$\{F
  * <!-- This is a slash comment -->
  *
  * Code between two specially formatted comments will be stripped out:
- * <!-- FEATURE.start(some-feature-name) -->
+ * <!-- FEATURE.start(feature-name) -->
  * <div>some feature is enabled</div>
- * <!-- FEATURE.end(some-feature-name) -->
+ * <!-- FEATURE.end(feature-name) -->
  *
  * @param {string} content the content to strip
  * @param {Object} features the feature object; values are feature names and values should be boolean
@@ -104,7 +104,7 @@ const stripHTMLComments = (content, feature, replace) => {
  * An attribute is used in HTML, for example:
  *
  * Elements whose name is a feature name will be stripped out if the attributed name has a value of a disabled feature.
- * <feature-name="some-feature-name"></feature-name=>
+ * <feature-name="feature-name"></feature-name=>
  *
  * @param {string} content the content to strip
  * @param {Object} features the feature object; values are feature names and values should be boolean
@@ -143,7 +143,7 @@ const stripHTMLElements = (content, feature, replace) => {
  * An attribute is used in HTML, for example:
  *
  * Elements with attributes with the name "feature-name" will be stripped if the value is a disabled feature.
- * <div feature-name="some-feature-name"></div>
+ * <div feature-name="feature-name"></div>
  *
  * @param {string} content the content to strip
  * @param {Object} features the feature object; values are feature names and values should be boolean
@@ -186,9 +186,9 @@ const stripHTMLAttributes = (content, feature, replace) => {
  * /&#42; This is a star comment &#42;/
  *
  * Code between two specially formatted strings will be stripped out:
- * /&#42; FEATURE.start(some-feature-name) &#42;/
+ * /&#42; FEATURE.start(feature-name) &#42;/
  * console.log('some feature is enabled');
- * /&#42; FEATURE.end(some-feature-name) &#42;/
+ * /&#42; FEATURE.end(feature-name) &#42;/
  *
  * @param {string} content the content to strip
  * @param {Object} features the feature object; values are feature names and values should be boolean
@@ -266,9 +266,9 @@ const stripStarComments = (content, feature, replace) => {
  * // This is a slash comment
  *
  * Code between two specially formatted strings will be stripped out:
- * // FEATURE.start(some-feature-name)
+ * // FEATURE.start(feature-name)
  * console.log('some feature is enabled');
- * // FEATURE.end(some-feature-name)
+ * // FEATURE.end(feature-name)
  *
  * @param {string} content the content to strip
  * @param {Object} features the feature object; values are feature names and values should be boolean
@@ -323,7 +323,7 @@ export const strip = (content, features, options) => {
     options = mergeDeep({}, defaultOptions, options);
 
     // Get the features to disable
-    const disabledFeatures = Object.keys(features).filter(name => !features[name]);
+    const disabledFeatures = Object.keys(features).filter(feature => !features[feature]);
 
     // Strip based on options
     disabledFeatures.forEach(function (feature) {

@@ -62,6 +62,8 @@ const getDisableHandler = () => useCustomHandlersCheckbox.checked ? customDisabl
 // this handler will dispatch the appropriate method (enable/disable) to
 // the FSDOM instance, along with the feature and the handler
 featureManager.addChangeListener((featureSnapshot, feature, enabled) => !!enabled ? fsDom.enable(feature, getEnableHandler()) : fsDom.disable(feature, getDisableHandler()));
+// NOTE: Use fsDom.syncToDom() instead of fsDom.enable and fsDom.disable for consistent results when using embedded features
+// featureManager.addChangeListener((featureSnapshot, feature, enabled) => fsDom.syncToDom(featureManager.getFeatures(featureSnapshot)));
 
 // Add click listeners for the "sync" button; this will invoke the FSDOM.syncToDom function with the current state of the features
 document.querySelectorAll('.js-sync-to-dom').forEach(element => element.addEventListener('click', () => fsDom.syncToDom(featureManager.getFeatures(), getEnableHandler(), getDisableHandler())));

@@ -20,7 +20,7 @@ const readFileAsString = path => fs.readFileSync(path, 'utf-8');
  * @param {string} extension the file extension to get files for
  * @returns {string[]} an array of file names within the STRIP_FILES_DIR which match the pattern *-source.<extension>
  */
-const getTestStripsByExtension = extension => fs.readdirSync(STRIP_FILES_DIR).filter(name => name.match(new RegExp(`.*-source\\.${extension}\$`))).map(name => name.replace(`-source.${extension}`, ''));
+const getTestStripsByExtension = extension => fs.readdirSync(STRIP_FILES_DIR).filter(fileName => fileName.match(new RegExp(`.*-source\\.${extension}\$`))).map(fileName => fileName.replace(`-source.${extension}`, ''));
 
 /**
  * Returns a string which is either truncated, or the full string. Strings are truncated only

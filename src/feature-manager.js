@@ -21,7 +21,7 @@ export const isFeatures = features => Util.isObjectStrict(features) && Object.va
 const castAsFeatures = (features, deciderFn) => {
     const strictFeatures = Util.isObjectStrict(features) ? features : {};
     const fn = Util.isFunction(deciderFn) ? deciderFn : Util.isTrue;
-    Object.keys(strictFeatures).forEach(name => strictFeatures[name] = Util.isTrue(fn(strictFeatures[name])));
+    Object.keys(strictFeatures).forEach(feature => strictFeatures[feature] = Util.isTrue(fn(strictFeatures[feature])));
     return strictFeatures;
 };
 
@@ -50,13 +50,13 @@ const clone = source => {
 /**
  * Fires events to the listeners.
  *
- * @param {string} name the name of the feature to
+ * @param {string} feature the name of the feature
  * @param {boolean} value the new value (will be normalized using Util.isTrue)
  * @param {object} features the features
  * @param {objet[]} [listeners] a list of listeners
  * @param {function} [onError] the error function (when listener execution fails)
  */
-const fireEvent = (name, value, features, listeners, onError) => {
+const fireEvent = (feature, value, features, listeners, onError) => {
     const featureSnapshot = clone(features);
 
     listeners.forEach(listener => {
@@ -64,11 +64,11 @@ const fireEvent = (name, value, features, listeners, onError) => {
         setTimeout(() => {
             try {
                 if (Util.isFunction(listener)) {
-                    listener.apply({}, [featureSnapshot, name, value]);
+                    listener.apply({}, [featureSnapshot, feature, value]);
                 }
             } catch (error) {
                 if (Util.isFunction(onError)) {
-                    onError.apply({}, [error, listener, name, value, featureSnapshot]);
+                    onError.apply({}, [error, listener, feature, value, featureSnapshot]);
                 } else {
                     console.warn('listener threw an exception', error);
                 }
@@ -79,19 +79,19 @@ const fireEvent = (name, value, features, listeners, onError) => {
 
 /**
  *
- * @param {string} name the name of the feature to
+ * @param {string} feature the name of the feature
  * @param {boolean} value the new value (will be normalized using Util.isTrue)
  * @param {object} features the features
  * @param {objet[]} [listeners] a list of listeners
  * @param {function} [onError] the error function (when listener execution fails)
  */
-const setAndFireEvent = (name, value, features, listeners, onError) => {
+const setAndFireEvent = (feature, value, features, listeners, onError) => {
     if (Util.isUndefined(value)) {
-        delete features[name];
+        delete features[feature];
     } else {
-        features[name] = Util.isTrue(value);
+        features[feature] = Util.isTrue(value);
     }
-    fireEvent(name, value, features, listeners, onError);
+    fireEvent(feature, value, features, listeners, onError);
 };
 
 /**
@@ -138,14 +138,14 @@ export class FeatureManager {
     /**
      * Adds features to this FeatureManager.
      *
-     * @param {string} name the feature name
+     * @param {string} feature the feature name
      * @param {boolean} value the feature value
      */
-    addFeature(name, value) {
+    addFeature(feature, value) {
         if (this.canAddFeatures()) {
             // Use the context version of isTrue (which may support things such as 'yes', 1 or 'enabled')
             const newValue = normalizeContextTrue(value,  this.context);
-            setAndFireEvent(name, newValue, this.features, this.listeners, this.context.onListenerError);
+            setAndFireEvent(feature, newValue, this.features, this.listeners, this.context.onListenerError);
         }
     }
 
@@ -162,12 +162,12 @@ export class FeatureManager {
     /**
      * Removes a feature from this FeatureManager. This is probably a bad idea.
      *
-     * @param {string} name the feature name to remove
+     * @param {string} feature the feature name to remove
      * @returns {boolean} true, if feaures was removed; false otherwise
      */
-    removeFeature(name) {
-        if (this.hasFeature(name) && this.canRemoveFeatures()) {
-            setAndFireEvent(name, undefined, this.features, this.listeners, this.context.onListenerError);
+    removeFeature(feature) {
+        if (this.hasFeature(feature) && this.canRemoveFeatures()) {
+            setAndFireEvent(feature, undefined, this.features, this.listeners, this.context.onListenerError);
             return true;
         }
         return false;
@@ -176,11 +176,11 @@ export class FeatureManager {
     /**
      * Determines if a feature exists.
      *
-     * @param {string} name the feature name
+     * @param {string} feature the feature name
      * @returns {boolean} returns true if the feature exists; false otherwise
      */
-    hasFeature(name) {
-        return Util.isDefined(this.features[name]);
+    hasFeature(feature) {
+        return Util.isDefined(this.features[feature]);
     }
 
     /**
@@ -189,8 +189,8 @@ export class FeatureManager {
      * @param {string} the feature name
      * @returns {boolean} true, if the feature is enabled; false otherwise
      */
-    isEnabled(name) {
-        return this.hasFeature(name) ? this.context.isEnabled(name, clone(this.features)) : false;
+    isEnabled(feature) {
+        return this.hasFeature(feature) ? this.context.isEnabled(feature, clone(this.features)) : false;
     }
 
     /**
@@ -199,36 +199,36 @@ export class FeatureManager {
      * @param {string} the feature name
      * @returns {boolean} true, if the feature is disabled; false otherwise
      */
-    isDisabled(name) {
+    isDisabled(feature) {
         // This is tricky; cannot return false if the feature is unknown because that would mean that
         //   isDisabled(unknown) === isEnabled(unknown) === false
         // And the world would explode
-        return !this.isEnabled(name);
+        return !this.isEnabled(feature);
     }
 
     /**
      * Determines if a feature can be set.
      *
-     * @param {string} name the name of the feature to set
+     * @param {string} feature the name of the feature to set
      * @param {boolean} value the value of the feature to be set
      */
-    canSetFeature(name, value) {
+    canSetFeature(feature, value) {
         // Pass the raw value to the context
-        return this.hasFeature(name) ? this.context.canSet(name, value) : false;
+        return this.hasFeature(feature) ? this.context.canSet(feature, value) : false;
     }
 
     /**
      * Sets a feature
      *
-     * @param {string} name the name of the feature to set
+     * @param {string} feature the name of the feature to set
      * @param {boolean} value the value of the feature to be set
      * @returns {boolean} true, if feaures can be enabled; false otherwise
      */
-    setEnabled(name, value) {
+    setEnabled(feature, value) {
         // Use the context version of isTrue (which may support things such as 'yes', 1 or 'enabled')
         const normalizedValue = normalizeContextTrue(value, this.context);
-        if (this.hasFeature(name) && this.canSetFeature(name, normalizedValue)) {
-            setAndFireEvent(name, normalizedValue, this.features, this.listeners, this.context.onListenerError);
+        if (this.hasFeature(feature) && this.canSetFeature(feature, normalizedValue)) {
+            setAndFireEvent(feature, normalizedValue, this.features, this.listeners, this.context.onListenerError);
             return true;
         }
         return false;
@@ -248,13 +248,13 @@ export class FeatureManager {
     /**
      * Executes a function if a specified feature is enabled.
      *
-     * @param {string} name the feature name
+     * @param {string} feature the feature name
      * @param {Function} fn the function to execute, if the feature is enabled
      * @param {[]} [args] the arguments for the function
      * @returns {any} the return value of the executed function
      */
-    ifEnabled(name, fn, args) {
-        if(this.isEnabled(name)) {
+    ifEnabled(feature, fn, args) {
+        if(this.isEnabled(feature)) {
             return this.context.execute(fn, args);
         }
     }
@@ -262,13 +262,13 @@ export class FeatureManager {
     /**
      * Executes a function if a specified feature is disabled.
      *
-     * @param {string} name the feature name
+     * @param {string} feature the feature name
      * @param {Function} fn the function to execute, if the feature is disabled
      * @param {[]} [args] the arguments for the function
      * @returns {any} the return value of the executed function
      */
-    ifDisabled(name, fn, args) {
-        if (this.hasFeature(name) && this.isDisabled(name)) {
+    ifDisabled(feature, fn, args) {
+        if (this.hasFeature(feature) && this.isDisabled(feature)) {
             return this.context.execute(fn, args);
         }
     }
@@ -276,47 +276,52 @@ export class FeatureManager {
     /**
      * Executes one of two functions, based on if the specified feature is enabled.
      *
-     * @param {string} name the name of the feature
+     * @param {string} feature the name of the feature
      * @param {Function} enabledFn the function to execute if the feature is enabled
      * @param {Function} disabledFn the function to execute if the feature is disabled
      * @param {[]} [enabledArgs] arguments for the <i>enabledFn</i>
      * @param {[]} [disabledArgs] arguments for the <i>disabledFn</i>
-     * @returns {any} the return value of the executed function
+     * @returns {any} the return value of the executed function, or undefined if the feature is unknown
      */
-    decide(name, enabledFn, disabledFn, enabledArgs, disabledArgs) {
-        this.ifEnabled(name, enabledFn, enabledArgs);
-        this.ifDisabled(name, disabledFn, disabledArgs);
+    decide(feature, enabledFn, disabledFn, enabledArgs, disabledArgs) {
+        if (this.isEnabled(feature)) {
+            return this.ifEnabled(feature, enabledFn, enabledArgs);
+        } else if (this.isDisabled(feature)) {
+            return this.ifDisabled(feature, disabledFn, disabledArgs);         
+        }
+        // Feature is not defined
+        return;
     }
 
     /**
      * Determines if a feature can be enabled.
      *
-     * @param {string} name the feature name
+     * @param {string} feature the feature name
      * @returns {boolean} true, if the feature can be enabled; false otherwise
      */
-    canEnable(name) {
-        return this.canSetFeature(name, true);
+    canEnable(feature) {
+        return this.canSetFeature(feature, true);
     }
 
     /**
      * Determines if a feature can be disabled.
      *
-     * @param {string} name the feature name
+     * @param {string} feature the feature name
      * @returns {boolean} true, if the feature can be disbled; false otherwise
      */
-    canDisable(name) {
-        return this.canSetFeature(name, false);
+    canDisable(feature) {
+        return this.canSetFeature(feature, false);
     }
 
     /**
      * Enables a feature.
      *
-     * @param {string} name the name of the feature to enable
+     * @param {string} feature the name of the feature to enable
      * @returns {boolean} true, if the feature was enabled; false otherwise
      */
-    enable(name) {
-        if (this.canEnable(name)) {
-            this.setEnabled(name, true);
+    enable(feature) {
+        if (this.canEnable(feature)) {
+            this.setEnabled(feature, true);
             return true;
         }
         return false;
@@ -325,12 +330,12 @@ export class FeatureManager {
     /**
      * Disables a feature.
      *
-     * @param {string} name the name of the feature to disable
+     * @param {string} feature the name of the feature to disable
      * @returns {boolean} true, if the feature was disabled; false otherwise
      */
-    disable(name) {
-        if (this.canDisable(name)) {
-            this.setEnabled(name, false);
+    disable(feature) {
+        if (this.canDisable(feature)) {
+            this.setEnabled(feature, false);
             return true;
         }
         return false;
@@ -339,11 +344,11 @@ export class FeatureManager {
     /**
      * Determines if a feature can be toggled.
      *
-     * @param {string} name the name of the feature to toggle.
+     * @param {string} feature the name of the feature to toggle.
      * @returns {boolean} true, if the feature can be toggled; false otherwise
      */
-    canToggle(name) {
-        return this.isEnabled(name) ? this.canDisable(name) : this.canEnable(name);
+    canToggle(feature) {
+        return this.isEnabled(feature) ? this.canDisable(feature) : this.canEnable(feature);
     }
 
 
@@ -351,12 +356,12 @@ export class FeatureManager {
      * Toggles a feature. If the feature is enabled, then the feature will be disabled. If
      * the feature is disabled, it will be enabled.
      *
-     * @param {string} name the feature to toggle.
+     * @param {string} feature the feature to toggle.
      * @returns {boolean} true, if the feature can be toggled; false otherwise
      */
-    toggle(name) {
-        if (this.canToggle(name)) {
-            this.isEnabled(name) ? this.disable(name) : this.enable(name); // jshint ignore:line
+    toggle(feature) {
+        if (this.canToggle(feature)) {
+            this.isEnabled(feature) ? this.disable(feature) : this.enable(feature); // jshint ignore:line
             return true;
         }
         return false;
@@ -365,41 +370,41 @@ export class FeatureManager {
     /**
      * Determines if any of the specified features are enabled.
      *
-     * @param {string[]} names the feature names to check
+     * @param {string[]} features the feature names to check
      * @returns {boolean} true, if any features are enabled; false otherwise
      */
-    isAnyEnabled(names=[]) {
-        return names.map(feature => this.isEnabled(feature)).some(value => !!value);
+    isAnyEnabled(features=[]) {
+        return features.map(feature => this.isEnabled(feature)).some(value => !!value);
     }
 
     /**
      * Determines if all of the specified features are enabled.
      *
-     * @param {string[]} names the feature names to check
+     * @param {string[]} features the feature names to check
      * @returns {boolean} true, if all features are enabled; false otherwise
      */
-    isAllEnabled(names=[]) {
-        return names.map(feature => this.isEnabled(feature)).every(value => !!value);
+    isAllEnabled(features=[]) {
+        return features.map(feature => this.isEnabled(feature)).every(value => !!value);
     }
 
     /**
      * Determines if any of the specified features are disabled.
      *
-     * @param {string[]} names the feature names to check
+     * @param {string[]} features the feature names to check
      * @returns {boolean} true, if any features are disabled; false otherwise
      */
-    isAnyDisabled(names=[]) {
-        return names.map(feature => this.isEnabled(feature)).some(value => !value);
+    isAnyDisabled(features=[]) {
+        return features.map(feature => this.isEnabled(feature)).some(value => !value);
     }
 
     /**
      * Determines if all of the specified features are disabled.
      *
-     * @param {string[]} names the feature names to check
+     * @param {string[]} features the feature names to check
      * @returns {boolean} true, if all features are disabled; false otherwise
      */
-    isAllDisabled(names=[]) {
-        return names.map(feature => this.isEnabled(feature)).every(value => !value);
+    isAllDisabled(features=[]) {
+        return features.map(feature => this.isEnabled(feature)).every(value => !value);
     }
 
     /**

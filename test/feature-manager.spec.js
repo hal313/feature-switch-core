@@ -99,11 +99,11 @@ describe('FeatureManager', () => {
     });
 
     describe('API', () => {
-        const unknownFeatureName = 'unknownFeature';
-        const featureName = 'booleanFeature';
+        const unknownFeature = 'unknownFeature';
+        const feature = 'booleanFeature';
         const originalFeatureValue = true;
         const features = {};
-        features[featureName] = originalFeatureValue;
+        features[feature] = originalFeatureValue;
 
         describe('canAddFeatures', () => {
 
@@ -122,27 +122,27 @@ describe('FeatureManager', () => {
         });
 
         describe('addFeature', () => {
-            const newFeatureName = 'booleanFeatureTwo';
+            const newFeature = 'booleanFeatureTwo';
 
             test('the default context should allow a feature to be added', () => {
                 const featureManager = new FeatureManager.FeatureManager(features);
-                featureManager.addFeature(newFeatureName, true);
-                expect(featureManager.isEnabled(newFeatureName)).toBe(true);
+                featureManager.addFeature(newFeature, true);
+                expect(featureManager.isEnabled(newFeature)).toBe(true);
             });
 
             test('a custom context should handle adding features', () => {
                 let featureManager = new FeatureManager.FeatureManager(features, {isTrue: () => true});
-                featureManager.addFeature(newFeatureName, true);
-                expect(featureManager.isEnabled(newFeatureName)).toBe(true);
+                featureManager.addFeature(newFeature, true);
+                expect(featureManager.isEnabled(newFeature)).toBe(true);
 
                 featureManager = new FeatureManager.FeatureManager(features, {isTrue: () => false});
-                featureManager.addFeature(newFeatureName, true);
-                expect(featureManager.hasFeature(newFeatureName)).toBe(true);
-                expect(featureManager.isEnabled(newFeatureName)).toBe(false);
+                featureManager.addFeature(newFeature, true);
+                expect(featureManager.hasFeature(newFeature)).toBe(true);
+                expect(featureManager.isEnabled(newFeature)).toBe(false);
 
                 featureManager = new FeatureManager.FeatureManager(features, {canAddFeatures: () => false});
-                featureManager.addFeature(newFeatureName, true);
-                expect(featureManager.hasFeature(newFeatureName)).toBe(false);
+                featureManager.addFeature(newFeature, true);
+                expect(featureManager.hasFeature(newFeature)).toBe(false);
             });
 
         });
@@ -167,18 +167,18 @@ describe('FeatureManager', () => {
 
             test('the default context should remove a feature', () => {
                 const featureManager = new FeatureManager.FeatureManager(features);
-                featureManager.removeFeature(featureName);
-                expect(featureManager.hasFeature(featureName)).toBe(false);
+                featureManager.removeFeature(feature);
+                expect(featureManager.hasFeature(feature)).toBe(false);
             });
 
             test('a custom context should handle removing features', () => {
                 let featureManager = new FeatureManager.FeatureManager(features, {canRemoveFeatures: () => true});
-                featureManager.removeFeature(featureName);
-                expect(featureManager.hasFeature(featureName)).toBe(false);
+                featureManager.removeFeature(feature);
+                expect(featureManager.hasFeature(feature)).toBe(false);
 
                 featureManager = new FeatureManager.FeatureManager(features, {canRemoveFeatures: () => false});
-                featureManager.removeFeature(featureName);
-                expect(featureManager.hasFeature(featureName)).toBe(true);
+                featureManager.removeFeature(feature);
+                expect(featureManager.hasFeature(feature)).toBe(true);
             });
 
         });
@@ -186,11 +186,11 @@ describe('FeatureManager', () => {
         describe('hasFeature', () => {
 
             test('should return true when the feature exists', () => {
-                expect(new FeatureManager.FeatureManager(features).hasFeature(featureName)).toBe(true);
+                expect(new FeatureManager.FeatureManager(features).hasFeature(feature)).toBe(true);
             });
 
             test('should return true when the feature does not exist', () => {
-                expect(new FeatureManager.FeatureManager(features).hasFeature(unknownFeatureName)).toBe(false);
+                expect(new FeatureManager.FeatureManager(features).hasFeature(unknownFeature)).toBe(false);
             });
 
         });
@@ -199,16 +199,16 @@ describe('FeatureManager', () => {
 
             test('the default context should return the correct value', () => {
                 const featureManager = new FeatureManager.FeatureManager(features);
-                expect(featureManager.isEnabled(featureName)).toBe(originalFeatureValue);
+                expect(featureManager.isEnabled(feature)).toBe(originalFeatureValue);
 
-                featureManager.setEnabled(featureName, !originalFeatureValue);
-                expect(featureManager.isEnabled(featureName)).toBe(!originalFeatureValue);
+                featureManager.setEnabled(feature, !originalFeatureValue);
+                expect(featureManager.isEnabled(feature)).toBe(!originalFeatureValue);
             });
 
             test('a custom context should handle the value', () => {
                 // This feature manager will return the opposite of the actual value
                 const featureManager = new FeatureManager.FeatureManager(features, {isEnabled: () => !originalFeatureValue});
-                expect(featureManager.isEnabled(featureName)).toBe(!originalFeatureValue);
+                expect(featureManager.isEnabled(feature)).toBe(!originalFeatureValue);
             });
 
         });
@@ -217,16 +217,16 @@ describe('FeatureManager', () => {
 
             test('the default context should return the correct value', () => {
                 const featureManager = new FeatureManager.FeatureManager(features);
-                expect(featureManager.isDisabled(featureName)).toBe(!originalFeatureValue);
+                expect(featureManager.isDisabled(feature)).toBe(!originalFeatureValue);
 
-                featureManager.setEnabled(featureName, !originalFeatureValue);
-                expect(featureManager.isDisabled(featureName)).toBe(originalFeatureValue);
+                featureManager.setEnabled(feature, !originalFeatureValue);
+                expect(featureManager.isDisabled(feature)).toBe(originalFeatureValue);
             });
 
             test('a custom context should handle the value', () => {
                 // This feature manager will return the opposite of the actual value
                 const featureManager = new FeatureManager.FeatureManager(features, {isEnabled: () => !originalFeatureValue});
-                expect(featureManager.isDisabled(featureName)).toBe(originalFeatureValue);
+                expect(featureManager.isDisabled(feature)).toBe(originalFeatureValue);
             });
 
         });
@@ -235,18 +235,18 @@ describe('FeatureManager', () => {
 
             test('the default context should return true if the feature is known', () => {
                 const featureManager = new FeatureManager.FeatureManager(features);
-                expect(featureManager.canSetFeature(featureName)).toBe(true);
-                expect(featureManager.canSetFeature(unknownFeatureName)).toBe(false);
+                expect(featureManager.canSetFeature(feature)).toBe(true);
+                expect(featureManager.canSetFeature(unknownFeature)).toBe(false);
             });
 
             test('a custom context should handle the ability to set a feature', () => {
                 let featureManager = new FeatureManager.FeatureManager(features, {canSet: () => true});
-                expect(featureManager.canSetFeature(featureName)).toBe(true);
-                expect(featureManager.canSetFeature(unknownFeatureName)).toBe(false);
+                expect(featureManager.canSetFeature(feature)).toBe(true);
+                expect(featureManager.canSetFeature(unknownFeature)).toBe(false);
 
                 featureManager = new FeatureManager.FeatureManager(features, {canSet: () => false});
-                expect(featureManager.canSetFeature(featureName)).toBe(false);
-                expect(featureManager.canSetFeature(unknownFeatureName)).toBe(false);
+                expect(featureManager.canSetFeature(feature)).toBe(false);
+                expect(featureManager.canSetFeature(unknownFeature)).toBe(false);
             });
 
         });
@@ -255,27 +255,27 @@ describe('FeatureManager', () => {
 
             test('the default context should set the feature when the feature is known', () => {
                 const featureManager = new FeatureManager.FeatureManager(features);
-                featureManager.setEnabled(featureName, !originalFeatureValue);
+                featureManager.setEnabled(feature, !originalFeatureValue);
                 // The feature should be set to false
-                expect(featureManager.isEnabled(featureName)).toBe(!originalFeatureValue);
+                expect(featureManager.isEnabled(feature)).toBe(!originalFeatureValue);
             });
 
             test('the default context should not set the feature when the feature is not known', () => {
                 const featureManager = new FeatureManager.FeatureManager(features);
-                featureManager.setEnabled(unknownFeatureName, true);
-                expect(featureManager.isEnabled(unknownFeatureName)).toBe(false);
+                featureManager.setEnabled(unknownFeature, true);
+                expect(featureManager.isEnabled(unknownFeature)).toBe(false);
             });
 
             test('a custom context should handle setting the value', () => {
                 const featureManager = new FeatureManager.FeatureManager(features, {canSet: () => false});
 
                 // Toggle the feature value
-                featureManager.setEnabled(featureName, !originalFeatureValue);
+                featureManager.setEnabled(feature, !originalFeatureValue);
                 // The feature can not be set and should have the original value
-                expect(featureManager.isEnabled(featureName)).toBe(originalFeatureValue);
+                expect(featureManager.isEnabled(feature)).toBe(originalFeatureValue);
 
-                featureManager.setEnabled(unknownFeatureName, true);
-                expect(featureManager.isEnabled(unknownFeatureName)).toBe(false);
+                featureManager.setEnabled(unknownFeature, true);
+                expect(featureManager.isEnabled(unknownFeature)).toBe(false);
             });
 
         });
@@ -296,7 +296,7 @@ describe('FeatureManager', () => {
                 const fn = jest.fn();
                 const args = ['one', 'two'];
                 const featureManager = new FeatureManager.FeatureManager(features);
-                featureManager.ifEnabled(featureName, fn, args);
+                featureManager.ifEnabled(feature, fn, args);
                 expect(fn.mock.calls.length).toBe(1);
                 expect(fn.mock.calls[0][0]).toBe(args[0]);
                 expect(fn.mock.calls[0][1]).toBe(args[1]);
@@ -305,15 +305,15 @@ describe('FeatureManager', () => {
             test('the default context should not execute the provided function if the feature is disabled', () => {
                 const fn = jest.fn();
                 const featureManager = new FeatureManager.FeatureManager(features);
-                featureManager.setEnabled(featureName, !originalFeatureValue);
-                featureManager.ifEnabled(featureName, fn);
+                featureManager.setEnabled(feature, !originalFeatureValue);
+                featureManager.ifEnabled(feature, fn);
                 expect(fn.mock.calls.length).toBe(0);
             });
 
             test('the default context should not execute the provided function if the feature is unknown', () => {
                 const fn = jest.fn();
                 const featureManager = new FeatureManager.FeatureManager(features);
-                featureManager.ifEnabled(unknownFeatureName, fn);
+                featureManager.ifEnabled(unknownFeature, fn);
                 expect(fn.mock.calls.length).toBe(0);
             });
 
@@ -322,7 +322,7 @@ describe('FeatureManager', () => {
                 const args = ['one', 'two'];
                 const contextExecute = jest.fn();
                 const featureManager = new FeatureManager.FeatureManager(features, {execute: contextExecute});
-                featureManager.ifEnabled(featureName, fn, args);
+                featureManager.ifEnabled(feature, fn, args);
                 expect(contextExecute.mock.calls.length).toBe(1);
                 expect(contextExecute.mock.calls[0][0]).toBe(fn);
                 expect(contextExecute.mock.calls[0][1]).toBe(args);
@@ -333,8 +333,8 @@ describe('FeatureManager', () => {
                 const args = ['one', 'two'];
                 const contextExecute = jest.fn();
                 const featureManager = new FeatureManager.FeatureManager(features, {execute: contextExecute});
-                featureManager.setEnabled(featureName, false);
-                featureManager.ifEnabled(featureName, fn, args);
+                featureManager.setEnabled(feature, false);
+                featureManager.ifEnabled(feature, fn, args);
                 expect(contextExecute.mock.calls.length).toBe(0);
             });
 
@@ -342,7 +342,7 @@ describe('FeatureManager', () => {
                 const fn = jest.fn();
                 const contextExecute = jest.fn();
                 const featureManager = new FeatureManager.FeatureManager(features, {execute: contextExecute});
-                featureManager.ifEnabled(unknownFeatureName, fn);
+                featureManager.ifEnabled(unknownFeature, fn);
                 expect(contextExecute.mock.calls.length).toBe(0);
             });
 
@@ -354,8 +354,8 @@ describe('FeatureManager', () => {
                 const fn = jest.fn();
                 const args = ['one', 'two'];
                 const featureManager = new FeatureManager.FeatureManager(features);
-                featureManager.setEnabled(featureName, false);
-                featureManager.ifDisabled(featureName, fn, args);
+                featureManager.setEnabled(feature, false);
+                featureManager.ifDisabled(feature, fn, args);
                 expect(fn.mock.calls.length).toBe(1);
                 expect(fn.mock.calls[0][0]).toBe(args[0]);
                 expect(fn.mock.calls[0][1]).toBe(args[1]);
@@ -364,14 +364,14 @@ describe('FeatureManager', () => {
             test('the default context should not execute the provided function if the feature is enabled', () => {
                 const fn = jest.fn();
                 const featureManager = new FeatureManager.FeatureManager(features);
-                featureManager.ifDisabled(featureName, fn);
+                featureManager.ifDisabled(feature, fn);
                 expect(fn.mock.calls.length).toBe(0);
             });
 
             test('the default context should not execute the provided function if the feature is unknown', () => {
                 const fn = jest.fn();
                 const featureManager = new FeatureManager.FeatureManager(features);
-                featureManager.ifDisabled(unknownFeatureName, fn);
+                featureManager.ifDisabled(unknownFeature, fn);
                 expect(fn.mock.calls.length).toBe(0);
             });
 
@@ -380,8 +380,8 @@ describe('FeatureManager', () => {
                 const args = ['one', 'two'];
                 const contextExecute = jest.fn();
                 const featureManager = new FeatureManager.FeatureManager(features, {execute: contextExecute});
-                featureManager.setEnabled(featureName, false);
-                featureManager.ifDisabled(featureName, fn, args);
+                featureManager.setEnabled(feature, false);
+                featureManager.ifDisabled(feature, fn, args);
                 expect(contextExecute.mock.calls.length).toBe(1);
                 expect(contextExecute.mock.calls[0][0]).toBe(fn);
                 expect(contextExecute.mock.calls[0][1]).toBe(args);
@@ -392,8 +392,8 @@ describe('FeatureManager', () => {
                 const args = ['one', 'two'];
                 const contextExecute = jest.fn();
                 const featureManager = new FeatureManager.FeatureManager(features, {execute: contextExecute});
-                featureManager.setEnabled(featureName, true);
-                featureManager.ifDisabled(featureName, fn, args);
+                featureManager.setEnabled(feature, true);
+                featureManager.ifDisabled(feature, fn, args);
                 expect(contextExecute.mock.calls.length).toBe(0);
             });
 
@@ -401,7 +401,7 @@ describe('FeatureManager', () => {
                 const fn = jest.fn();
                 const contextExecute = jest.fn();
                 const featureManager = new FeatureManager.FeatureManager(features, {execute: contextExecute});
-                featureManager.ifDisabled(unknownFeatureName, fn);
+                featureManager.ifDisabled(unknownFeature, fn);
                 expect(contextExecute.mock.calls.length).toBe(0);
             });
 
@@ -413,12 +413,13 @@ describe('FeatureManager', () => {
             const disabledArgs = ['disabledOne', 'disabledTwo'];
 
             test('the default context should run the enabled function and not the disabled function when the feature is enabled', () => {
-                const enabledFn = jest.fn();
-                const disabledFn = jest.fn();
+                const enabledFn = jest.fn(() => 'enabled');
+                const disabledFn = jest.fn(() => 'disabled');
 
                 const featureManager = new FeatureManager.FeatureManager(features);
-                featureManager.setEnabled(featureName, true);
-                featureManager.decide(featureName, enabledFn, disabledFn, enabledArgs, disabledArgs);
+                featureManager.setEnabled(feature, true);
+                const result = featureManager.decide(feature, enabledFn, disabledFn, enabledArgs, disabledArgs);
+                expect(result).toEqual('enabled');
                 expect(enabledFn.mock.calls.length).toBe(1);
                 expect(enabledFn.mock.calls[0][0]).toBe(enabledArgs[0]);
                 expect(enabledFn.mock.calls[0][1]).toBe(enabledArgs[1]);
@@ -427,13 +428,14 @@ describe('FeatureManager', () => {
             });
 
             test('the default context should run the disabled function and not the enabled function when the feature is disabled', () => {
-                const enabledFn = jest.fn();
-                const disabledFn = jest.fn();
+                const enabledFn = jest.fn(() => 'enabled');
+                const disabledFn = jest.fn(() => 'disabled');
 
                 const featureManager = new FeatureManager.FeatureManager(features);
                 // Set the feature to be disabled
-                featureManager.setEnabled(featureName, false);
-                featureManager.decide(featureName, enabledFn, disabledFn, enabledArgs, disabledArgs);
+                featureManager.setEnabled(feature, false);
+                const result = featureManager.decide(feature, enabledFn, disabledFn, enabledArgs, disabledArgs);
+                expect(result).toEqual('disabled');
                 // The enabled function should not have been executed again
                 expect(enabledFn.mock.calls.length).toBe(0);
                 // Make sure the disabled function was not executed
@@ -448,8 +450,8 @@ describe('FeatureManager', () => {
                 const contextExecute = jest.fn();
 
                 const featureManager = new FeatureManager.FeatureManager(features, {execute: contextExecute});
-                featureManager.setEnabled(featureName, true);
-                featureManager.decide(featureName, enabledFn, disabledFn, enabledArgs, disabledArgs);
+                featureManager.setEnabled(feature, true);
+                featureManager.decide(feature, enabledFn, disabledFn, enabledArgs, disabledArgs);
 
                 // Make sure the disabled function was not executed
                 expect(disabledFn.mock.calls.length).toBe(0);
@@ -465,8 +467,8 @@ describe('FeatureManager', () => {
                 const contextExecute = jest.fn();
 
                 const featureManager = new FeatureManager.FeatureManager(features, {execute: contextExecute});
-                featureManager.setEnabled(featureName, false);
-                featureManager.decide(featureName, enabledFn, disabledFn, enabledArgs, disabledArgs);
+                featureManager.setEnabled(feature, false);
+                featureManager.decide(feature, enabledFn, disabledFn, enabledArgs, disabledArgs);
 
                 // Make sure the enabled function was not executed
                 expect(enabledFn.mock.calls.length).toBe(0);
@@ -484,38 +486,38 @@ describe('FeatureManager', () => {
                 const featureManager = new FeatureManager.FeatureManager(features);
 
                 // Should be able to set enabled when the feature is true
-                featureManager.setEnabled(featureName, true);
-                expect(featureManager.canEnable(featureName)).toBe(true);
+                featureManager.setEnabled(feature, true);
+                expect(featureManager.canEnable(feature)).toBe(true);
                 // Should be able to set enabled when the feature is false
-                featureManager.setEnabled(featureName, false);
-                expect(featureManager.canEnable(featureName)).toBe(true);
+                featureManager.setEnabled(feature, false);
+                expect(featureManager.canEnable(feature)).toBe(true);
 
                 // Should not be able to set an unknown feature
-                expect(featureManager.canEnable(unknownFeatureName)).toBe(false);
+                expect(featureManager.canEnable(unknownFeature)).toBe(false);
             });
 
             test('a custom context should handle the ability to set a feature', () => {
                 let featureManager = new FeatureManager.FeatureManager(features, {canSet: () => true});
 
                 // Should be able to set enabled when the feature is true
-                featureManager.setEnabled(featureName, true);
-                expect(featureManager.canEnable(featureName)).toBe(true);
+                featureManager.setEnabled(feature, true);
+                expect(featureManager.canEnable(feature)).toBe(true);
                 // Should be able to set enabled when the feature is false
-                featureManager.setEnabled(featureName, false);
-                expect(featureManager.canEnable(featureName)).toBe(true);
+                featureManager.setEnabled(feature, false);
+                expect(featureManager.canEnable(feature)).toBe(true);
                 // Should not be able to set an unknown feature
-                expect(featureManager.canEnable(unknownFeatureName)).toBe(false);
+                expect(featureManager.canEnable(unknownFeature)).toBe(false);
 
                 featureManager = new FeatureManager.FeatureManager(features, {canSet: () => false});
                 // Should not be able to set enabled when the feature is true
-                featureManager.setEnabled(featureName, true);
-                expect(featureManager.canEnable(featureName)).toBe(false);
+                featureManager.setEnabled(feature, true);
+                expect(featureManager.canEnable(feature)).toBe(false);
                 // Should be able to set enabled when the feature is false
-                featureManager.setEnabled(featureName, false);
-                expect(featureManager.canEnable(featureName)).toBe(false);
+                featureManager.setEnabled(feature, false);
+                expect(featureManager.canEnable(feature)).toBe(false);
 
                 // Should not be able to set an unknown feature
-                expect(featureManager.canEnable(unknownFeatureName)).toBe(false);
+                expect(featureManager.canEnable(unknownFeature)).toBe(false);
             });
 
         });
@@ -526,38 +528,38 @@ describe('FeatureManager', () => {
                 const featureManager = new FeatureManager.FeatureManager(features);
 
                 // Should be able to set enabled when the feature is true
-                featureManager.setEnabled(featureName, true);
-                expect(featureManager.canDisable(featureName)).toBe(true);
+                featureManager.setEnabled(feature, true);
+                expect(featureManager.canDisable(feature)).toBe(true);
                 // Should be able to set enabled when the feature is false
-                featureManager.setEnabled(featureName, false);
-                expect(featureManager.canDisable(featureName)).toBe(true);
+                featureManager.setEnabled(feature, false);
+                expect(featureManager.canDisable(feature)).toBe(true);
 
                 // Should not be able to set an unknown feature
-                expect(featureManager.canDisable(unknownFeatureName)).toBe(false);
+                expect(featureManager.canDisable(unknownFeature)).toBe(false);
             });
 
             test('a custom context should handle the ability to set a feature', () => {
                 let featureManager = new FeatureManager.FeatureManager(features, {canSet: () => true});
 
                 // Should be able to set enabled when the feature is true
-                featureManager.setEnabled(featureName, true);
-                expect(featureManager.canDisable(featureName)).toBe(true);
+                featureManager.setEnabled(feature, true);
+                expect(featureManager.canDisable(feature)).toBe(true);
                 // Should be able to set enabled when the feature is false
-                featureManager.setEnabled(featureName, false);
-                expect(featureManager.canDisable(featureName)).toBe(true);
+                featureManager.setEnabled(feature, false);
+                expect(featureManager.canDisable(feature)).toBe(true);
                 // Should not be able to set an unknown feature
-                expect(featureManager.canDisable(unknownFeatureName)).toBe(false);
+                expect(featureManager.canDisable(unknownFeature)).toBe(false);
 
                 featureManager = new FeatureManager.FeatureManager(features, {canSet: () => false});
                 // Should not be able to set enabled when the feature is true
-                featureManager.setEnabled(featureName, true);
-                expect(featureManager.canDisable(featureName)).toBe(false);
+                featureManager.setEnabled(feature, true);
+                expect(featureManager.canDisable(feature)).toBe(false);
                 // Should be able to set enabled when the feature is false
-                featureManager.setEnabled(featureName, false);
-                expect(featureManager.canDisable(featureName)).toBe(false);
+                featureManager.setEnabled(feature, false);
+                expect(featureManager.canDisable(feature)).toBe(false);
 
                 // Should not be able to set an unknown feature
-                expect(featureManager.canDisable(unknownFeatureName)).toBe(false);
+                expect(featureManager.canDisable(unknownFeature)).toBe(false);
             });
 
         });
@@ -568,12 +570,12 @@ describe('FeatureManager', () => {
                 const featureManager = new FeatureManager.FeatureManager(features);
 
                 // Make sure the feature is disabled
-                featureManager.setEnabled(featureName, false);
-                expect(featureManager.isEnabled(featureName)).toBe(false);
+                featureManager.setEnabled(feature, false);
+                expect(featureManager.isEnabled(feature)).toBe(false);
 
                 // Enable the feature and check the state
-                featureManager.enable(featureName);
-                expect(featureManager.isEnabled(featureName)).toBe(true);
+                featureManager.enable(feature);
+                expect(featureManager.isEnabled(feature)).toBe(true);
             });
 
         });
@@ -584,12 +586,12 @@ describe('FeatureManager', () => {
                 const featureManager = new FeatureManager.FeatureManager(features);
 
                 // Make sure the feature is enabled
-                featureManager.setEnabled(featureName, true);
-                expect(featureManager.isEnabled(featureName)).toBe(true);
+                featureManager.setEnabled(feature, true);
+                expect(featureManager.isEnabled(feature)).toBe(true);
 
                 // Disable the feature and check the state
-                featureManager.disable(featureName);
-                expect(featureManager.isEnabled(featureName)).toBe(false);
+                featureManager.disable(feature);
+                expect(featureManager.isEnabled(feature)).toBe(false);
             });
 
         });
@@ -600,17 +602,17 @@ describe('FeatureManager', () => {
                 const featureManager = new FeatureManager.FeatureManager(features);
 
                 // Check that the toggle works one way
-                expect(featureManager.canToggle(featureName)).toBe(true);
+                expect(featureManager.canToggle(feature)).toBe(true);
                 // And check the other way
                 featureManager.setEnabled(featureManager, !originalFeatureValue);
-                expect(featureManager.canToggle(featureName)).toBe(true);
+                expect(featureManager.canToggle(feature)).toBe(true);
             });
 
             test('a custom context should handle allowing toggle', () => {
                 const featureManager = new FeatureManager.FeatureManager(features, {canSet: () => false});
 
                 // Check that the toggle works one way
-                expect(featureManager.canToggle(featureName)).toBe(false);
+                expect(featureManager.canToggle(feature)).toBe(false);
             });
 
         });
@@ -620,21 +622,21 @@ describe('FeatureManager', () => {
                 const featureManager = new FeatureManager.FeatureManager(features);
 
                 // Check that the toggle works one way
-                let beforeValue = featureManager.isEnabled(featureName);
-                featureManager.toggle(featureName);
-                expect(featureManager.isEnabled(featureName)).toBe(!beforeValue);
+                let beforeValue = featureManager.isEnabled(feature);
+                featureManager.toggle(feature);
+                expect(featureManager.isEnabled(feature)).toBe(!beforeValue);
                 // And check the other way
-                featureManager.toggle(featureName);
-                expect(featureManager.isEnabled(featureName)).toBe(beforeValue);
+                featureManager.toggle(feature);
+                expect(featureManager.isEnabled(feature)).toBe(beforeValue);
             });
 
             test('a custom context should handle allowing toggle', () => {
                 const featureManager = new FeatureManager.FeatureManager(features, {canSet: () => false});
 
                 // Check that the toggle does not work
-                let beforeValue = featureManager.isEnabled(featureName);
-                featureManager.toggle(featureName);
-                expect(featureManager.isEnabled(featureName)).toBe(beforeValue);
+                let beforeValue = featureManager.isEnabled(feature);
+                featureManager.toggle(feature);
+                expect(featureManager.isEnabled(feature)).toBe(beforeValue);
             });
 
         });
@@ -741,17 +743,17 @@ describe('FeatureManager', () => {
 
                 // The features after a toggle
                 const featuresAfterToggle = featureManager.getFeatures();
-                featuresAfterToggle[featureName] = !originalFeatureValue;
+                featuresAfterToggle[feature] = !originalFeatureValue;
 
                 // The features after adding a new feature
-                const newFeatureName = 'newFeature';
-                const newFeatureValue = true;
+                const newFeature = 'newFeature';
+                const newValue = true;
                 const featuresAfterAdd = clone(featuresAfterToggle);
-                featuresAfterAdd[newFeatureName] = newFeatureValue;
+                featuresAfterAdd[newFeature] = newValue;
 
                 // The features after removing a feature
                 const featuresAfterRemove = clone(featuresAfterAdd);
-                delete featuresAfterRemove[newFeatureName];
+                delete featuresAfterRemove[newFeature];
 
                 let listener;
                 let unsubscribe;
@@ -775,13 +777,13 @@ describe('FeatureManager', () => {
                     expect(listener.mock.calls.length).toBe(0);
 
                     // Toggle the feature
-                    featureManager.toggle(featureName);
+                    featureManager.toggle(feature);
 
                     // Add a feature
-                    featureManager.addFeature(newFeatureName, newFeatureValue);
+                    featureManager.addFeature(newFeature, newValue);
 
                     // Remove a feature
-                    featureManager.removeFeature(newFeatureName);
+                    featureManager.removeFeature(newFeature);
                 })
                 .then(() => {
                     // Check that the listener has been called exactly twice
@@ -794,7 +796,7 @@ describe('FeatureManager', () => {
                     // Should be a clone
                     expect(listener.mock.calls[0][0]).not.toBe(features);
                     // Check the feature name and value (opposite of the original value)
-                    expect(listener.mock.calls[0][1]).toBe(featureName);
+                    expect(listener.mock.calls[0][1]).toBe(feature);
                     expect(listener.mock.calls[0][2]).toBe(!originalFeatureValue);
 
                     // After adding a feature
@@ -804,8 +806,8 @@ describe('FeatureManager', () => {
                     // Should be a clone
                     expect(listener.mock.calls[1][0]).not.toBe(features);
                     // Check the feature name and value
-                    expect(listener.mock.calls[1][1]).toBe(newFeatureName);
-                    expect(listener.mock.calls[1][2]).toBe(newFeatureValue);
+                    expect(listener.mock.calls[1][1]).toBe(newFeature);
+                    expect(listener.mock.calls[1][2]).toBe(newValue);
 
                     // After removing a feature
                     //
@@ -814,7 +816,7 @@ describe('FeatureManager', () => {
                     // Should be a clone
                     expect(listener.mock.calls[2][0]).not.toBe(features);
                     // Check the feature name and value
-                    expect(listener.mock.calls[2][1]).toBe(newFeatureName);
+                    expect(listener.mock.calls[2][1]).toBe(newFeature);
                     // The feature value will be undefined, since it was removed
                     expect(listener.mock.calls[2][2]).toBe(undefined);
                 })
@@ -829,12 +831,12 @@ describe('FeatureManager', () => {
                 const featuresBeforeToggle = featureManager.getFeatures();
                 // The features after a toggle
                 const featuresAfterToggle = featureManager.getFeatures();
-                featuresAfterToggle[featureName] = !originalFeatureValue;
+                featuresAfterToggle[feature] = !originalFeatureValue;
 
-                const newFeatureName = 'newFeature';
+                const newFeature = 'newFeature';
                 const newFeatureValue = true;
                 const featuresAfterAdd = clone(featuresAfterToggle);
-                featuresAfterAdd[newFeatureName] = newFeatureValue;
+                featuresAfterAdd[newFeature] = newFeatureValue;
 
                 let firstListener;
                 let secondListener;
@@ -860,13 +862,13 @@ describe('FeatureManager', () => {
                     expect(secondListener.mock.calls.length).toBe(0);
 
                     // Toggle the feature (to invoke the listners)
-                    featureManager.toggle(featureName);
+                    featureManager.toggle(feature);
 
                     // Unsubscribe the first listener
                     firstUnsubscribe();
 
                     // Toggle the feature (to invoke the listners)
-                    featureManager.toggle(featureName);
+                    featureManager.toggle(feature);
                 })
                 .then(() => {
                     // Check the expectations for the first listener
@@ -878,7 +880,7 @@ describe('FeatureManager', () => {
                     // Should be a clone
                     expect(firstListener.mock.calls[0][0]).not.toBe(features);
                     // Check the feature name and value (opposite of the original value)
-                    expect(firstListener.mock.calls[0][1]).toBe(featureName);
+                    expect(firstListener.mock.calls[0][1]).toBe(feature);
                     expect(firstListener.mock.calls[0][2]).toBe(!originalFeatureValue);
 
                     // Check the expecations for the second listner
@@ -890,7 +892,7 @@ describe('FeatureManager', () => {
                     // Should be a clone
                     expect(secondListener.mock.calls[0][0]).not.toBe(features);
                     // Check the feature name and value (opposite of the original value)
-                    expect(secondListener.mock.calls[0][1]).toBe(featureName);
+                    expect(secondListener.mock.calls[0][1]).toBe(feature);
                     expect(secondListener.mock.calls[0][2]).toBe(!originalFeatureValue);
                     //
                     // Second invocation
@@ -900,7 +902,7 @@ describe('FeatureManager', () => {
                     // Should be a clone
                     expect(secondListener.mock.calls[1][0]).not.toBe(features);
                     // Check the feature name and value (undefined, since the feature was removed)
-                    expect(secondListener.mock.calls[1][1]).toBe(featureName);
+                    expect(secondListener.mock.calls[1][1]).toBe(feature);
                     expect(secondListener.mock.calls[1][2]).toBe(originalFeatureValue);
                 })
                 .finally(secondUnsubscribe);
@@ -914,7 +916,7 @@ describe('FeatureManager', () => {
                 const originalFeatures = clone(features);
                 // The features after a toggle
                 const featuresAfterToggle = clone(originalFeatures);
-                featuresAfterToggle[featureName] = !originalFeatureValue;
+                featuresAfterToggle[feature] = !originalFeatureValue;
 
                 return new Promise(resolve => {
                     onListenerError = jest.fn(resolve);
@@ -923,7 +925,7 @@ describe('FeatureManager', () => {
                     unsubscribe = featureManager.addChangeListener(listener);
 
                     // Toggle a feature
-                    featureManager.toggle(featureName);
+                    featureManager.toggle(feature);
                 })
                 .then(() => {
                     // Check the call counts
@@ -933,7 +935,7 @@ describe('FeatureManager', () => {
                     // Check the parametgers
                     expect(onListenerError.mock.calls[0][0]).toBe(error);
                     expect(onListenerError.mock.calls[0][1]).toEqual(expect.any(Function));
-                    expect(onListenerError.mock.calls[0][2]).toEqual(featureName);
+                    expect(onListenerError.mock.calls[0][2]).toEqual(feature);
                     // The feature was toggled; check the value
                     expect(onListenerError.mock.calls[0][3]).toEqual(!originalFeatureValue);
                     expect(onListenerError.mock.calls[0][4]).toEqual(featuresAfterToggle);
