@@ -366,8 +366,203 @@ const featureManager = new FeatureManager(features);
 // If dark testing is enabled, then both the current and next implementations will be executed.
 const result = featureManager.decide('darkTestImplementationA', () => evaluateMetrics(() => 'currentImplementation result', () => 'nextImplementation result'), () => 'currentImplementation result')
 console.log('result', result);
-// TODO output: varies based on which function executed the quickest
+// output: varies based on which function executed the quickest
 ```
+
+## Stripping Features
+The file `feature-switch-strip` exports a function (`strip`), which reads a string and attempts to strip out features as described the an `options` object. Features may be described by HTML comments, slash-style comments or star-style comments. Within HTML files, features may also be described in markup.
+
+It is important to note that the stripper is _not_ a parser and therefore may act erratically when presented with complex configurations or situations. It is recommended to avoid embedded features all together, or to use the DOM manipulation functionality when managing complex DOM structures.
+
+### Comments
+All comment types require two sets of comments, a start marker and an end marker. Having unbalanced blocks (i.e. missing end markers or end markers which are not in the correct order) may result in unexpected behavior. For this reason, it is recommended to be sure that both start and end marker blocks are formatted correctly and present in the correct place.
+
+#### HTML Comments
+HTML comments are generally found within HTML or XML files and look like:
+```html
+<!-- FEATURE.start(feature-name) -->
+    <div>content for feature-name</div>
+<!-- FEATURE.end(feature-name) -->
+```
+
+#### Slash
+Slash comments are generally found in JavaScript or LESS files:
+```javascript
+// FEATURE.start(feature-name)
+console.log('feature-name is enabled');
+// FEATURE.end(feature-name)
+```
+#### Star
+Star comments are common in JavaScript as well as CSS:
+```javascript
+/* FEATURE.start(feature-name) */
+console.log('feature-name is enabled');
+/* FEATURE.start(feature-name) */
+```
+
+### HTML Elements
+In addition to comments in HTML files, some elements can also be configured to describe features. This functionality is experimental and may not work as desired. The DOM management functionality should produce more reliable results (as well as provide more options of specifying features).
+
+#### Feature Name as Element
+Using elements whose name is the feature name is supported.
+```html
+<feature-name>feature-name content</feature-name>
+```
+
+#### Element with the "feature-name" Attribute
+Supports the `feature-name` attribute on elements. This will not work well with DOM elements of the same type within the content of the feature. The DOM management functionality should produce more reliable results (as well as provide more options of specifying features).
+```html
+<div feature-name="feature-name"></div>
+```
+
+### Options
+The `strip` function can take an optional second arguement, `options`. This is the structure of the options and represents the default options. Note that the `replace` attribute replaces disabled features and that `${FEATURE}` will be replaced with the name of the feature being disabled.
+
+```javascript
+// The default options
+{
+
+    // /* FEATURE.start(feature-name) */ ... /* FEATURE.end(feature-name) */
+    starComments: {
+        enabled: true,
+        replace: '/* Feature [${FEATURE}] DISABLED */'
+    },
+    // feature.start(feature-name) -> // feature.end(feature-name)
+    slashComments: {
+        enabled: true,
+        replace: '// Feature [${FEATURE}] DISABLED //'
+    },
+    // <!-- feature.start(feature-name) -->...<!-- feature.end(feature-name) -->
+    htmlComments: {
+        enabled: true,
+        replace: '<!-- Feature [${FEATURE}] DISABLED -->'
+    },
+    // <feature-name ...></feature-name>
+    htmlElements: {
+        enabled: true,
+        replace: '<!-- Feature [${FEATURE}] DISABLED -->'
+    },
+    // <div ... feature-name="feature-name" ...></div>
+    htmlAttributes: {
+        // This is experimental and probably only works on well formated HTML that is not complex and certainly not embedded elements, thank you very much
+        enabled: true,
+        replace: '<!-- Feature [${FEATURE}] DISABLED -->'
+    }
+};
+```
+
+### DOM Manipulation
+Live DOM manipulation can be used to alter the DOM to show or hide DOM elements which represent features.
+
+#### HTML Comments
+HTML comments are generally found within HTML or XML files and look like:
+```html
+<!-- FEATURE.start(feature-name) -->
+    <div>content for feature-name</div>
+<!-- FEATURE.end(feature-name) -->
+```
+
+#### Feature Name as Element
+Using elements whose name is the feature name is supported.
+```html
+<feature-name>feature-name content</feature-name>
+```
+
+#### Element with the "feature-name" Attribute
+Supports the `feature-name` attribute on elements.
+```html
+<div feature-name="feature-name"></div>
+```
+
+#### Feature as Element with the "feature-name" Attribute
+Using elements of type `feature` and whose name is specified by the `feature-name` attribute are supported.
+```html
+<feature feature-name="feature-name">feature-name content</feature>
+```
+
+### Using the FeatureSwitchDOM Object
+The `FeatureSwitchDOM` is not aware of features per-se and instead operates solely on feature names. While simple cases may be serviced by the `enable` and `disable` functions, more complex cases should instead use `syncToDom`.
+```javascript
+// Import the class
+import { FeatureSwitchDOM } from './feature-switch-dom';
+
+// Instantiate the class
+const fsDom = new FeatureSwitchDOM();
+
+// Manipulate the DOM
+//
+// Enable all DOM elements described by the name "feature-one"
+fsDOM.enable('feature-one');
+
+// Disable all DOM elements described by the name "feature-one"
+fsDOM.disable('feature-one`);
+
+// Synchronize all DOM elements to the specified features
+fsDOM.syncToDom({'feature-one': true, 'feature-two': false});
+```
+
+It is more common to use the FeatureSwitchDOM class with a FeatureManager instance:
+```javascript
+// Import the class
+import { FeatureSwitchDOM } from './feature-switch-dom';
+import { FeatureManager } from './feature-manager';
+
+// The features
+const features = {
+    featureone: true,
+    featuretwo: false,
+    featurethree: true,
+    featurefour: false
+};
+
+// Instantiate the DOM management
+const fsDom = new FeatureSwitchDOM();
+
+// The FeatureManager instance
+const featureManager = new FeatureManager(features);
+
+// Enable a feature
+featureManager.enable('featuretwo');
+
+// Sync the DOM
+fsDom.syncToDom(featureManager.getFeatures());
+```
+
+Automatically managing the HTML can be accomplished fairly easily.
+```javascript
+import { FeatureSwitchDOM } from './feature-switch-dom.js';
+import { FeatureManager } from './feature-manager.js';
+
+// The features
+const features = {
+    featureone: true,
+    featuretwo: false,
+    featurethree: true,
+    featurefour: false
+};
+
+// The FeatureManager instance
+const featureManager = new FeatureManager(features);
+
+// The FeatureSwitchDOM instance
+const fsDom = new FeatureSwitchDOM(featureManager.getFeatures());
+
+// The FeatureSwitchDOM instance will sync the features to the DOM every time the features change
+featureManager.addChangeListener((featureSnapshot, feature, enabled) => fsDom.syncToDom(featureManager.getFeatures(featureSnapshot)));
+```
+
+#### Custom Handlers
+The FeatureSwitchDOM methods take optional handlers which can be used to change how a DOM element is rendered when enabled or disabled. The signature is:
+```javascript
+/**
+ * @param {Node} node the node being managed
+ * @param {String} feature the feature
+ * @param {boolean} enabled the state of the feature
+ */
+const handler = (node, feature, enabled) => {};
+```
+
+NOTE: Because the FeatureSwichDOM is a parser and the stripper is not a parser, achieving the same functionality between the two is not possible (in particular, the stripper does not support the same functionality as the DOM management functionality). However, both the stripper and the DOM management functionality support HTML comments. For this reason, it is recommended to use strictly HTML comments if consistent behavior is desired across the stripper and the DOM management functionality.
 
 ## Developing
 To setup a development environment:
@@ -392,3 +587,7 @@ Using "live server" functionality with an IDE, serve up `test/dom-files/dom-samp
 ```bash
 ## Run a server and open a browser to the page
 npx http-server -o test/dom-files/dom-sample.html
+```
+
+#### Bugs
+To report a defect or unexpected behavior, please visit the (GitHub issues page)[https://github.com/hal313/feature-switch-core/issues].
