@@ -18,7 +18,7 @@ const fsDom = new FeatureSwitchDOM(featureManager.getFeatures());
 // Setup the DOM to match the initial feature state
 // fsDom.syncToDom(featureManager.getFeatures());
 
-const customDisableHandler = (node, feature, enabled) => {
+const customDisableHandler = (node) => {
     // Text:
     if (Node.TEXT_NODE === node.nodeType) {
         // If the cached node value is not set, then set it (this protects against
@@ -36,7 +36,7 @@ const customDisableHandler = (node, feature, enabled) => {
     }
 };
 
-const customEnableHandler = (node, feature, enabled) => {
+const customEnableHandler = (node/*, feature, enabled*/) => {
     // Text:
     if (Node.TEXT_NODE === node.nodeType) {
         // Set the node value from cache (if the value is not set; this protects
