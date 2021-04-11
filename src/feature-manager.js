@@ -287,7 +287,7 @@ export class FeatureManager {
         if (this.isEnabled(feature)) {
             return this.ifEnabled(feature, enabledFn, enabledArgs);
         } else if (this.isDisabled(feature)) {
-            return this.ifDisabled(feature, disabledFn, disabledArgs);         
+            return this.ifDisabled(feature, disabledFn, disabledArgs);
         }
         // Feature is not defined
         return;
@@ -351,7 +351,6 @@ export class FeatureManager {
         return this.isEnabled(feature) ? this.canDisable(feature) : this.canEnable(feature);
     }
 
-
     /**
      * Toggles a feature. If the feature is enabled, then the feature will be disabled. If
      * the feature is disabled, it will be enabled.
@@ -365,6 +364,53 @@ export class FeatureManager {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Creates a function which will execute the passed in function if and only if the specified feature is enabled at the
+     * time that the returned function is executed.
+     *
+     * @param {string} feature the feature name
+     * @param {Function} fn the function to execute
+     * @returns {Function} a function that will execute <i>fn</i> IFF <i>feature</i> is enabled
+     */
+    ifFunction(feature, fn) {
+        return this.ifElseFunction(feature, fn, undefined);
+    }
+
+    /**
+     * Creates a function which will execute the passed in function if and only if the specified feature is disabled at the
+     * time that the returned function is executed.
+     *
+     * @param {string} feature the feature name
+     * @param {Function} fn the function to execute
+     * @returns {Function} a function that will execute <i>fn</i> IFF <i>feature</i> is disabled
+     */
+    elseFunction(feature, fn) {
+        return this.ifElseFunction(feature, undefined, fn);
+    }
+
+    /**
+     * An amalgamation of ifFunction and elseFunction. Creates a function which, when executed, will execute fnIf if the feature is enabled; otherwise
+     * fnElse is executed.
+     *
+     * @param {string} feature the feature name
+     * @param {Function} fnIf the function to execute if the feature is enabled
+     * @param {Function} fnElse the function to execute if the featgure is disabled
+     * @returns {Function} a function that will execute <i>fnIf</i> IFF <i>feature</i> is enabled and will execute <i>fnElse</i> IFF the feature is disabled
+     */
+    ifElseFunction(feature, fnIf, fnElse) {
+        return (...args) => {
+            if (this.isEnabled(feature) && Util.isFunction(fnIf)) {
+                return fnIf.apply({}, args);
+            }
+            else if (this.isDisabled(feature) && Util.isFunction(fnElse)) {
+                return fnElse.apply({}, args);
+            }
+            else {
+                return undefined;
+            }
+        };
     }
 
     /**

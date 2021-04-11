@@ -142,7 +142,8 @@ console.log(featureManager.isEnabled('featureTwo'));
 // output: true
 ```
 
-Feature state notification example:
+### Feature state notification example:
+It may be useful to respond to feature state changes.
 ```javascript
 // Define some features
 const features = {
@@ -160,6 +161,51 @@ featureManager.enable('featureTwo');
 // output: feature featureTwo was changed to true
 // NOTE: The return value of the function is a function which will remove the listener from
 //       the FeatureManager
+```
+
+### Function Generation
+Sometimes it is useful to create a function whose body will execute only when a specific feature is enabled or disabled:
+```javascript
+// Define some features
+const features = {
+    featureOne: true
+};
+
+// Create an instance of a FeatureManager
+const featureManager = new FeatureManager(features);
+const ifFeatureOne = featureManager.ifFunction('featureOne', (name) => console.log(`featureOne is enabled, ${name}`));
+const elseFeatureOne = featureManager.elseFunction('featureOne', (name) => console.log(`featureOne is disabled, ${name}`));
+
+ifFeatureOne('Sam');
+elseFeatureOne('Mel');
+// output: featureOne is enabled, Sam
+
+featureManager.disable('featureOne');
+ifFeatureOne('Sam');
+elseFeatureOne('Mel');
+// output: featureTwo is disabled, Mel
+```
+It is possible to combine the above two functions as one:
+```javascript
+// Define some features
+const features = {
+    featureOne: true
+};
+
+// Create an instance of a FeatureManager
+const featureManager = new FeatureManager(features);
+const ifElseFeatureOne = featureManager.ifElseFunction(
+    'featureOne',
+    (name) => console.log(`featureOne is enabled, ${name}`),
+    (name) => console.log(`featureOne is disabled, ${name}`)
+);
+
+ifElseFeatureOne('Sam');
+// output: featureOne is enabled, Sam
+
+featureManager.disable('featureOne');
+ifElseFeatureOne('Mel');
+// output: featureOne is disabled, Mel
 ```
 
 ### Context
