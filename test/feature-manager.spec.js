@@ -163,6 +163,7 @@ describe('FeatureManager', () => {
             });
 
         });
+
         describe('removeFeature', () => {
 
             test('the default context should remove a feature', () => {
@@ -616,6 +617,7 @@ describe('FeatureManager', () => {
             });
 
         });
+
         describe('toggle', () => {
 
             test('the default context should toggle a feature', () => {
@@ -637,6 +639,99 @@ describe('FeatureManager', () => {
                 let beforeValue = featureManager.isEnabled(feature);
                 featureManager.toggle(feature);
                 expect(featureManager.isEnabled(feature)).toBe(beforeValue);
+            });
+
+        });
+
+        describe('ifFunction', () => {
+
+            test('should create a function which executes only when the feature is enabled', () => {
+                // Create the feature manager and enable a feature
+                const featureManager = new FeatureManager.FeatureManager(features);
+                featureManager.enable(feature);
+
+                // Create a function (underlying implementation is a mock)
+                const fnMock = jest.fn();
+                const fn = featureManager.ifFunction(feature, fnMock);
+
+                // The parameters to pass to the function
+                const args = ['a', true, 3];
+                fn(...args);
+                //
+                // The mock function was called once and with the correct parameters
+                expect(fnMock).toHaveBeenCalledTimes(1);
+                expect(fnMock).toHaveBeenCalledWith(...args);
+
+                // Disable the feature
+                featureManager.disable(feature);
+                // Invoke the function again
+                fn(...args);
+                // The mock should not have been called
+                expect(fnMock).toHaveBeenCalledTimes(1);
+            });
+
+        });
+
+        describe('elseFunction', () => {
+
+            test('should create a function which executes only when the feature is disabled', () => {
+                // Create the feature manager and disable a feature
+                const featureManager = new FeatureManager.FeatureManager(features);
+                featureManager.disable(feature);
+
+                // Create a function (underlying implementation is a mock)
+                const fnMock = jest.fn();
+                const fn = featureManager.elseFunction(feature, fnMock);
+
+                // The parameters to pass to the function
+                const args = ['a', true, 3];
+                fn(...args);
+                //
+                // The mock function was called once and with the correct parameters
+                expect(fnMock).toHaveBeenCalledTimes(1);
+                expect(fnMock).toHaveBeenCalledWith(...args);
+
+                // Enable the feature
+                featureManager.enable(feature);
+                // Invoke the function again
+                fn(...args);
+                // The mock should not have been called again
+                expect(fnMock).toHaveBeenCalledTimes(1);
+            });
+
+        });
+
+        describe('ifElseFunction', () => {
+
+            test('should create a function which executes one function when the feature is enabled and a different function when the feature is disabled', () => {
+                // Create the feature manager and disable a feature
+                const featureManager = new FeatureManager.FeatureManager(features);
+                featureManager.enable(feature);
+
+                // Create a function (underlying implementation is a mock)
+                const ifFnMock = jest.fn();
+                const elseFnMock = jest.fn();
+                const fn = featureManager.ifElseFunction(feature, ifFnMock, elseFnMock);
+
+                // The parameters to pass to the function
+                const args = ['a', true, 3];
+                fn(...args);
+                //
+                // The if-mock should have been called once, with the correct parameters
+                expect(ifFnMock).toHaveBeenCalledTimes(1);
+                expect(ifFnMock).toHaveBeenCalledWith(...args);
+                // The else-mock should not have been called
+                expect(elseFnMock).not.toHaveBeenCalled();
+
+                // Disable the feature
+                featureManager.disable(feature);
+                // Invoke the function again
+                fn(...args);
+                // The if-mock should not have been called again
+                expect(ifFnMock).toHaveBeenCalledTimes(1);
+                // The else-mock should have been called once, with the correct parameters
+                expect(elseFnMock).toHaveBeenCalledTimes(1);
+                expect(elseFnMock).toHaveBeenCalledWith(...args);
             });
 
         });
