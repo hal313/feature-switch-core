@@ -1,7 +1,8 @@
 # [feature-switch-core](https://github.com/hal313/feature-switch-core)
 
 [![Build Status](http://img.shields.io/travis/hal313/feature-switch-core/master.svg?style=flat-square)](https://travis-ci.org/hal313/feature-switch-core)
-[![Dependency Status](https://david-dm.org/hal313/feature-switch-core.svg?style=flat-square)](https://david-dm.org/hal313/feature-switch-core)[![DevDependency Status](https://david-dm.org/hal313/feature-switch-core/dev-status.svg?style=flat-square)](https://david-dm.org/hal313/feature-switch-core)
+[![Dependency Status](https://david-dm.org/hal313/feature-switch-core.svg?style=flat-square)](https://david-dm.org/hal313/feature-switch-core)
+[![DevDependency Status](https://david-dm.org/hal313/feature-switch-core/dev-status.svg?style=flat-square)](https://david-dm.org/hal313/feature-switch-core)
 [![npm Version](https://badge.fury.io/js/%40hal313%2Ffeature-switch-core.svg)](https://badge.fury.io/js/%40hal313%2Ffeature-switch-core)
 [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/hal313/feature-switch-core)
 
