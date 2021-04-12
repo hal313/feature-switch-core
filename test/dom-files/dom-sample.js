@@ -15,6 +15,13 @@ const featureManager = new FeatureManager(features);
 // The FeatureSwitchDOM instance
 const fsDom = new FeatureSwitchDOM(featureManager.getFeatures());
 
+
+// Add the feature manager instance and fsDom instance to the window so users
+// can use the debug console in order to play around
+window.featureManager = featureManager;
+window.fsDom = fsDom;
+
+
 // Setup the DOM to match the initial feature state
 // fsDom.syncToDom(featureManager.getFeatures());
 
